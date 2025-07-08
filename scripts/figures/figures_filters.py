@@ -1,7 +1,13 @@
 import numpy as np
+import sys
+import os
+
 from astroquery.svo_fps import SvoFps
 from matplotlib import pyplot as plt
 from astropy.io import fits
+
+# Add FaStar to the Python path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from fastar_ssp_class import PopulationSynthesizer
 from fastar_imf import single_powerlaw as unimodal
@@ -81,6 +87,6 @@ plt.xlim(2000, 11500)
 plt.tight_layout()
 
 # Save to file (high resolution)
-plt.savefig('figures/ssp_with_filters.pdf', dpi=300)
+plt.savefig('../../figures/ssp_with_filters.pdf', dpi=300)
 
 plt.close('all')
