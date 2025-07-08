@@ -1,6 +1,11 @@
 from matplotlib import pyplot as plt
 
+import sys
+import os
 import numpy as np
+
+# Add FaStar to the Python path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import fastar_imf
 
 mass_arr = np.linspace(0.1,5)
@@ -43,6 +48,6 @@ ax.plot(mass_arr,imf, label='Kroupa IMF',linewidth=1.5)
 ax.legend()
 
 fig.tight_layout()
-fig.savefig('figures/IMF_shapes.pdf')
+fig.savefig('../../figures/IMF_shapes.pdf')
 plt.close('all')
 
