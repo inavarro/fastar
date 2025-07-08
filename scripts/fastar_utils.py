@@ -1,10 +1,5 @@
 import jax.numpy as jnp
-from jax import grad
 from jax.scipy.integrate import trapezoid
-
-from scipy.integrate import cumulative_trapezoid
-from scipy.interpolate import interp1d
-import numpy as np
 
 # =============================================================================
 # Photometric and Spectroscopic Utilities for FaStar
