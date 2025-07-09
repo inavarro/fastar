@@ -6,11 +6,8 @@ from astroquery.svo_fps import SvoFps
 from matplotlib import pyplot as plt
 from astropy.io import fits
 
-# Add FaStar to the Python path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
-from fastar_ssp_class import PopulationSynthesizer
-from fastar_imf import single_powerlaw as unimodal
+from fastar.fastar_ssp_class import PopulationSynthesizer
+from fastar.fastar_imf import single_powerlaw as unimodal
 
 # ---------------------------------------------------
 # Spectroscopic predictions

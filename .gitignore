@@ -34,3 +34,6 @@ Thumbs.db
 # Other temp files
 *.swp
 *~
+
+# Local installation
+*.egg-info/

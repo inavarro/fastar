@@ -10,9 +10,10 @@ from astropy.io import ascii
 from flax import linen as nn
 from jax.scipy.integrate import trapezoid
 
-from fastar_imf import single_powerlaw as unimodal
-from fastar_interpolate_isochrones import isochrone_interpolation
-from fastar_interpolate_colors import color_interpolation
+from fastar.path_utils import get_data_path
+from fastar.fastar_imf import single_powerlaw as unimodal
+from fastar.fastar_interpolate_isochrones import isochrone_interpolation
+from fastar.fastar_interpolate_colors import color_interpolation
 
 # =============================================================================
 # Solar constants
@@ -69,13 +70,13 @@ class PopulationSynthesizer:
         if model_label is None:
             self.rlabel = f'_spec'
 
-            with h5py.File('../aux/sun_ref.hdf5', 'r') as sun:
+            with h5py.File(get_data_path('sun_ref.hdf5',subdir="aux"), 'r') as sun:
                 self.sun_spec = sun['sun_spec'][:]
 
         if model_label == 'phot':
             self.rlabel = f'_phot'
 
-            with h5py.File('../aux/sun_ref.hdf5', 'r') as sun:
+            with h5py.File(get_data_path('sun_ref.hdf5',subdir="aux"), 'r') as sun:
                 self.sun_spec = sun['sun_phot'][:]
 
         self.imf_function = imf_function if imf_function is not None else unimodal
@@ -89,11 +90,12 @@ class PopulationSynthesizer:
         Load trained PCA regressor, scalers, and PCA components.
         """
         model = PCARegressor(output_dim=self.npc, activation_type=self.activation_type)
-        with open(f"../aux/pca_regressor{self.rlabel}.flax", "rb") as f:
+
+        with open(get_data_path(f"pca_regressor{self.rlabel}.flax",subdir="aux"), "rb") as f:
             self.params = flax_ser.from_bytes(model.init(jax.random.PRNGKey(0), jnp.ones((1, 3))), f.read())
         self.model = model
 
-        with h5py.File(f"../aux/training_artifacts{self.rlabel}.h5", "r") as f:
+        with h5py.File(get_data_path(f"training_artifacts{self.rlabel}.h5",subdir="aux"), "r") as f:
             self.scaler_X_mean = f['scaler_X/mean_'][:]
             self.scaler_X_scale = f['scaler_X/scale_'][:]
             self.scaler_Y_mean = f['scaler_Y/mean_'][:]
@@ -108,7 +110,8 @@ class PopulationSynthesizer:
         Load isochrones, V-band filter response, bolometric corrections, 
         and optimized age and metallicity samplings.
         """
-        with h5py.File('../isochrones/BASTI-IAC_isochrones.hdf5', 'r') as iso:
+
+        with h5py.File(get_data_path("BASTI-IAC_isochrones.hdf5",subdir="isochrones"), 'r') as iso:
             self.mets = iso['mets'][:]
             self.ages = iso['ages'][:]
             self.mass_ini_data = iso['mass_ini'][:]
@@ -116,18 +119,18 @@ class PopulationSynthesizer:
             self.logg_out_data = iso['logg_out'][:]
             self.lumi_out_data = iso['lumi_out'][:]
 
-        tab = ascii.read('../aux/filters_default.res')
+        tab = ascii.read(get_data_path("filters_default.res",subdir="aux"))
         fwave = tab['col1']
         fresp = tab['col2']
         self.filter_response = jnp.interp(self.wave, fwave, fresp, left=0, right=0)
 
-        with h5py.File('../aux/WORTHEY11_colors.hdf5', 'r') as color:
+        with h5py.File(get_data_path("WORTHEY11_colors.hdf5",subdir="aux"), 'r') as color:
             self.bcv_grid = color['bcv'][:]
             self.fmet_array = color['ufmet'][:]
             self.logg_array = color['ulogg'][:]
             self.teff_log10_array = color['uteff'][:]
 
-        with h5py.File('../aux/pop_iso.hdf5', 'r') as color:
+        with h5py.File(get_data_path("pop_iso.hdf5",subdir="aux"), 'r') as color:
             self.iso_age = color['grid_ages'][:]
             self.iso_met = color['grid_mets'][:]
 

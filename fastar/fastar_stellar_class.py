@@ -6,6 +6,8 @@ import flax.serialization as flax_ser
 from functools import partial
 from flax import linen as nn
 
+from fastar.path_utils import get_data_path
+
 # =============================================================================
 # PCA-based Neural Network Model Definition
 # =============================================================================
@@ -62,11 +64,11 @@ class StellarSynthesizer:
         Load trained PCA regressor, scalers, and PCA components.
         """
         model = PCARegressor(output_dim=self.npc, activation_type=self.activation_type)
-        with open(f"../aux/pca_regressor{self.rlabel}.flax", "rb") as f:
+        with open(get_data_path(f"pca_regressor{self.rlabel}.flax",subdir="aux"), "rb") as f:
             self.params = flax_ser.from_bytes(model.init(jax.random.PRNGKey(0), jnp.ones((1, 3))), f.read())
         self.model = model
 
-        with h5py.File(f"../aux/training_artifacts{self.rlabel}.h5", "r") as f:
+        with h5py.File(get_data_path(f"training_artifacts{self.rlabel}.h5",subdir="aux"), "r") as f:
             self.scaler_X_mean = f['scaler_X/mean_'][:]
             self.scaler_X_scale = f['scaler_X/scale_'][:]
             self.scaler_Y_mean = f['scaler_Y/mean_'][:]

@@ -1,12 +1,8 @@
 from matplotlib import pyplot as plt
 
-import sys
-import os
 import numpy as np
 
-# Add FaStar to the Python path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-import fastar_imf
+from fastar import fastar_imf
 
 mass_arr = np.linspace(0.1,5)
 
