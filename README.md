@@ -9,7 +9,7 @@
 
 **FaStar** is a fully differentiable, evolutionary stellar population synthesis code. It generates single stellar population (SSP) model predictions for both spectroscopic (from ~3500 Å to ~7,400 Å) and SED (from ~2,000 Å to ~11,500 Å) measurements.
 
-Unlike traditional SSP models, **FaStar** produces continuous predictions for any  age, metallicity, and initial mass function (IMF). It also supports SSP model uncertainty estimation through Monte Carlo sampling.
+Unlike traditional SSP models, **FaStar** produces continuous predictions for any  age, metallicity, and initial mass function (IMF) value. It also supports SSP model uncertainty estimation through Monte Carlo sampling.
 
 Critically, **FaStar** can also generate on the fly semi-resolved SSP models assuming the IMF is not fully sampled, i.e., when the number of stars per resolution element is not large enough. 
 
