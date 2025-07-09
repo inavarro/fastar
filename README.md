@@ -19,7 +19,7 @@ Critically, **FaStar** can also generate on the fly semi-resolved SSP models ass
 - **[MILES](https://ui.adsabs.harvard.edu/abs/2006MNRAS.371..703S)** — empirical stellar library  
 - **[BOSZ](https://ui.adsabs.harvard.edu/abs/2024A%2526A...688A.197M)** — theoretical stellar library  
 - **[Worthey & Lee (2011)](https://ui.adsabs.harvard.edu/abs/2011ApJS..193....1W)** — bolometric correction tables  
-- **[BaSTI-IAC](https://ui.adsabs.harvard.edu/abs/2018ApJ...856..125H)** — isochrones
+- **[BaSTI-IAC](http://basti-iac.oa-abruzzo.inaf.it/)** — isochrones
 ---
 
 ## 🚀 Features
