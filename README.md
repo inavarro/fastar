@@ -14,7 +14,7 @@ Unlike traditional SSP models, **FaStar** produces continuous predictions for an
 Critically, **FaStar** can also generate on the fly semi-resolved SSP models assuming the IMF is not fully sampled, i.e., when the number of stars per resolution element is not large enough. 
 
 ---
-## ⚙️ Core ingredients
+## ⚙️ Ingredients
 
 - **[MILES](https://ui.adsabs.harvard.edu/abs/2006MNRAS.371..703S)** — empirical stellar library  
 - **[BOSZ](https://ui.adsabs.harvard.edu/abs/2024A%2526A...688A.197M)** — theoretical stellar library  
