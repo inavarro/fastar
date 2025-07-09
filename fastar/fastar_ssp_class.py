@@ -131,8 +131,8 @@ class PopulationSynthesizer:
             self.teff_log10_array = color['uteff'][:]
 
         with h5py.File(get_data_path("pop_iso.hdf5",subdir="aux"), 'r') as color:
-            self.iso_age = color['grid_ages'][:]
-            self.iso_met = color['grid_mets'][:]
+            self.iso_ages = color['grid_ages'][:]
+            self.iso_mets = color['grid_mets'][:]
 
     @partial(jax.jit, static_argnames=['self'])
     def _predict_spectrum(self, logg, teff, fmet):
@@ -335,18 +335,6 @@ class PopulationSynthesizer:
             "ml_stars": stellar_mass / L,       # M*/L
             "ml_total": 1. / L,                 # M_total/L
         }
-
-    def iso_ages(self):
-        """
-        Return optimized age grid
-        """
-        return self.iso_age
-
-    def iso_mets(self):
-        """
-        Return optimized metallicity grid
-        """
-        return self.iso_met
     
     @partial(jax.jit, static_argnames=['self'])
     def _get_isochrone(self, age, met):
