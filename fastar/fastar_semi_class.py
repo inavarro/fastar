@@ -239,7 +239,7 @@ class SemiResolvedSynthesizer:
 
         return wave, spec_total, mass_total
 
-    @partial(jax.jit, static_argnames=['self'])
+    @partial(jax.jit, static_argnames=['self','Nstars'])
     def _stochastic_IMF_sampling(self, imass, imf_params, Nstars, key):
         """
         Stochastically sample stellar masses from an IMF assuming
