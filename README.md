@@ -38,3 +38,11 @@ To install in development mode:
 git clone https://github.com/inavarro/fastar.git
 cd fastar
 pip install -e .
+
+--- 
+
+## ⚡️ Quick Start
+
+```python
+from fastar.fastar_ssp_class import PopulationSynthesizer as ssp
+wave, spec = ssp.synthesize(age=10, met=0)
