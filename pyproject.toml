@@ -5,6 +5,7 @@ description = "Stellar population synthesis tools"
 authors = [
   { name = "Ignacio Martin Navarro", email = "ignacio.martin@iac.es" }
 ]
+urls = { "homepage" = "https://github.com/inavarro/fastar" }
 readme = "README.md"
 license = { text = "MIT" }
 requires-python = ">=3.8"
