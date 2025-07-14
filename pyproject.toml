@@ -8,17 +8,14 @@ authors = [
 readme = "README.md"
 license = { text = "MIT" }
 requires-python = ">=3.8"
-
-# Dependencies your code needs to run
 dependencies = [
-  "numpy",
-  "matplotlib",
-  "jax",
-  "flax",
-  "h5py",
   "astropy",
   "astroquery",
+  "flax",
+  "jax",
   "h5py",
+  "matplotlib",
+  "numpy",
   "tqdm",
 ]
 
@@ -27,4 +24,4 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
-packages = ["fastar"]  
+packages = ["fastar"]
