@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 import jax.numpy as jnp
 from jax.scipy.ndimage import map_coordinates
 
