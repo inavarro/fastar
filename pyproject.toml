@@ -1,6 +1,6 @@
 [project]
+dynamic = ["version"]
 name = "fastar"
-version = "0.1.0"
 description = "Stellar population synthesis tools"
 authors = [
   { name = "Ignacio Martin Navarro", email = "ignacio.martin@iac.es" }
@@ -13,16 +13,19 @@ dependencies = [
   "astropy",
   "astroquery",
   "flax",
-  "jax",
   "h5py",
+  "jax",
   "matplotlib",
   "numpy",
   "tqdm",
 ]
 
 [build-system]
-requires = ["setuptools>=61.0"]
+requires = ["setuptools>=45", "wheel", "setuptools_scm>=6.2"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
 packages = ["fastar"]
+
+[tool.setuptools_scm]
+version_file = "fastar/_version.py"
