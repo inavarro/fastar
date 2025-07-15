@@ -56,7 +56,7 @@ class StellarSynthesizer:
     Class for generating stellar SED predictions with a PCA-based model
     """
 
-    def __init__(self, model_label=None, imf_function=None):
+    def __init__(self, model_label=None):
         self.npc = 16
         self.activation_type = 'gelu'
 
