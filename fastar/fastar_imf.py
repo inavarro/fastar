@@ -4,18 +4,20 @@
 import jax.numpy as jnp
 import jax.scipy.integrate as jsp_integrate
 
+
 # =============================================================================
 # Pre-defined IMF parametrizations
 # =============================================================================
 
+
 # =============================================================================
-# 1. Single Power Law (honoring Salpeter's visionary work 
+# 1. Single Power Law (honoring Salpeter's visionary work
 # https://ui.adsabs.harvard.edu/abs/1955ApJ...121..161S)
 # =============================================================================
 def single_powerlaw_raw(mass, m_min=0.1, m_max=100.0, alpha=2.35):
     """
-    Returns the normalized Salpeter IMF evaluated at `mass` over the range [m_min, m_max],
-    fully JAX-compatible with numerical normalization.
+    Returns the normalized Salpeter IMF evaluated at `mass` over the range
+    [m_min, m_max], fully JAX-compatible with numerical normalization.
 
     Parameters
     ----------
@@ -36,15 +38,16 @@ def single_powerlaw_raw(mass, m_min=0.1, m_max=100.0, alpha=2.35):
     mass = jnp.atleast_1d(mass)
 
     def imf_unnormalized(m):
-        return m**(-alpha)
+        return m ** (-alpha)
 
     m_vals = jnp.linspace(m_min, m_max, 5000)
-    norm = jsp_integrate.trapezoid(imf_unnormalized(m_vals)*m_vals, x=m_vals)
+    norm = jsp_integrate.trapezoid(imf_unnormalized(m_vals) * m_vals, x=m_vals)
 
     imf_vals = imf_unnormalized(mass) / norm
     imf_vals = jnp.where((mass >= m_min) & (mass <= m_max), imf_vals, 0.0)
 
     return imf_vals if imf_vals.shape[0] > 1 else imf_vals[0]
+
 
 def single_powerlaw(mass, params):
     """
@@ -64,10 +67,13 @@ def single_powerlaw(mass, params):
     """
     return single_powerlaw_raw(mass, **params)
 
+
 # =============================================================================
 # 2. Broken power-law
 # =============================================================================
-def broken_powerlaw_raw(mass, m_min=0.1, m_max=100.0, m_break=0.5, alpha1=1.3, alpha2=2.3):
+def broken_powerlaw_raw(
+    mass, m_min=0.1, m_max=100.0, m_break=0.5, alpha1=1.3, alpha2=2.3
+):
     """
     Returns the normalized broken power-law IMF evaluated at `mass`,
     fully JAX-compatible with numerical normalization.
@@ -97,17 +103,18 @@ def broken_powerlaw_raw(mass, m_min=0.1, m_max=100.0, m_break=0.5, alpha1=1.3, a
     def imf_piecewise(m):
         return jnp.where(
             m < m_break,
-            m**(-alpha1),
-            (m_break**(alpha2 - alpha1)) * m**(-alpha2)
+            m ** (-alpha1),
+            (m_break ** (alpha2 - alpha1)) * m ** (-alpha2),
         )
 
     m_vals = jnp.linspace(m_min, m_max, 5000)
-    norm = jsp_integrate.trapezoid(imf_piecewise(m_vals)*m_vals, x=m_vals)
+    norm = jsp_integrate.trapezoid(imf_piecewise(m_vals) * m_vals, x=m_vals)
 
     imf_vals = imf_piecewise(mass) / norm
     imf_vals = jnp.where((mass >= m_min) & (mass <= m_max), imf_vals, 0.0)
 
     return imf_vals if imf_vals.shape[0] > 1 else imf_vals[0]
+
 
 def broken_powerlaw(mass, params):
     """
@@ -127,14 +134,17 @@ def broken_powerlaw(mass, params):
     """
     return broken_powerlaw_raw(mass, **params)
 
+
 # =============================================================================
 # 3. Tapered power-law (https://arxiv.org/abs/astro-ph/0409601)
 # =============================================================================
-def flexi_imf_raw(mass, m_min=0.1, m_max=100.0, m_peak=0.5, alpha=2.3, beta=2.3):
+def flexi_imf_raw(
+    mass, m_min=0.1, m_max=100.0, m_peak=0.5, alpha=2.3, beta=2.3
+):
     """
-    Returns the normalized tapered power-law IMF as described in de Marchi, Paresce &
-    Portegies Zwart (2005), evaluated at `mass` and fully JAX-compatible with
-    numerical normalization.
+    Returns the normalized tapered power-law IMF as described in de Marchi,
+    Paresce & Portegies Zwart (2005), evaluated at `mass` and fully
+    JAX-compatible with numerical normalization.
 
     Parameters
     ----------
@@ -159,15 +169,16 @@ def flexi_imf_raw(mass, m_min=0.1, m_max=100.0, m_peak=0.5, alpha=2.3, beta=2.3)
     mass = jnp.atleast_1d(mass)
 
     def imf_unnormalized(m):
-        return m**(-alpha) * (1 - jnp.exp(-(m/m_peak)**beta))
+        return m ** (-alpha) * (1 - jnp.exp(-((m / m_peak) ** beta)))
 
     m_vals = jnp.linspace(m_min, m_max, 5000)
-    norm = jsp_integrate.trapezoid(imf_unnormalized(m_vals)*m_vals, x=m_vals)
+    norm = jsp_integrate.trapezoid(imf_unnormalized(m_vals) * m_vals, x=m_vals)
 
     imf_vals = imf_unnormalized(mass) / norm
     imf_vals = jnp.where((mass >= m_min) & (mass <= m_max), imf_vals, 0.0)
 
     return imf_vals if imf_vals.shape[0] > 1 else imf_vals[0]
+
 
 def flexi(mass, params):
     """
@@ -186,6 +197,7 @@ def flexi(mass, params):
         Normalized IMF values.
     """
     return flexi_imf_raw(mass, **params)
+
 
 # =============================================================================
 # 4. Chabrier 2003 IMF (https://arxiv.org/abs/astro-ph/0304382)
@@ -212,22 +224,21 @@ def chabrier_imf_raw(mass, m_min=0.1, m_max=100.0):
     mass = jnp.atleast_1d(mass)
 
     def log_normal(m):
-        return m**(-1) * jnp.exp(-(jnp.log10(m)-jnp.log10(0.08))**2/0.9522)
-
-    def imf_unnormalized(m):
-        return jnp.where(
-            m <= 1,
-            log_normal(m),
-            log_normal(1) * m**(-2.3)
+        return m ** (-1) * jnp.exp(
+            -((jnp.log10(m) - jnp.log10(0.08)) ** 2) / 0.9522
         )
 
+    def imf_unnormalized(m):
+        return jnp.where(m <= 1, log_normal(m), log_normal(1) * m ** (-2.3))
+
     m_vals = jnp.linspace(m_min, m_max, 5000)
-    norm = jsp_integrate.trapezoid(imf_unnormalized(m_vals)*m_vals, x=m_vals)
+    norm = jsp_integrate.trapezoid(imf_unnormalized(m_vals) * m_vals, x=m_vals)
 
     imf_vals = imf_unnormalized(mass) / norm
     imf_vals = jnp.where((mass >= m_min) & (mass <= m_max), imf_vals, 0.0)
 
     return imf_vals if imf_vals.shape[0] > 1 else imf_vals[0]
+
 
 def chabrier(mass, params):
     """
@@ -246,6 +257,7 @@ def chabrier(mass, params):
         Normalized IMF values.
     """
     return chabrier_imf_raw(mass, **params)
+
 
 # =============================================================================
 # 5. Kroupa 2001 (https://arxiv.org/abs/astro-ph/0009005)
@@ -279,18 +291,14 @@ def kroupa_imf_raw(mass, m_min=0.1, m_max=100.0):
     a3 = 2.3
 
     A1 = 1.0
-    A2 = A1 * m1**(a2 - a1)
-    A3 = A2 * m2**(a3 - a2)
+    A2 = A1 * m1 ** (a2 - a1)
+    A3 = A2 * m2 ** (a3 - a2)
 
     def imf_unnormalized(m):
         return jnp.where(
             m < m1,
-            A1 * m**(-a1),
-            jnp.where(
-                m < m2,
-                A2 * m**(-a2),
-                A3 * m**(-a3)
-            )
+            A1 * m ** (-a1),
+            jnp.where(m < m2, A2 * m ** (-a2), A3 * m ** (-a3)),
         )
 
     m_vals = jnp.linspace(m_min, m_max, 5000)
@@ -300,6 +308,7 @@ def kroupa_imf_raw(mass, m_min=0.1, m_max=100.0):
     imf_vals = jnp.where((mass >= m_min) & (mass <= m_max), imf_vals, 0.0)
 
     return imf_vals if imf_vals.shape[0] > 1 else imf_vals[0]
+
 
 def kroupa(mass, params):
     """
