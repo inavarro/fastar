@@ -61,10 +61,10 @@ class StellarSynthesizer:
         self.activation_type = 'gelu'
 
         if model_label is None:
-            self.rlabel = f'_spec'
+            self.rlabel = '_spec'
 
         if model_label == 'phot':
-            self.rlabel = f'_phot'
+            self.rlabel = '_phot'
 
         self._load_model()
 

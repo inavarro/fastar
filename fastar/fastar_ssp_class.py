@@ -77,7 +77,7 @@ class PopulationSynthesizer:
         self.activation_type = 'gelu'
 
         if model_label is None:
-            self.rlabel = f'_spec'
+            self.rlabel = '_spec'
 
             with h5py.File(
                 get_data_path('sun_ref.hdf5', subdir='aux'), 'r'
@@ -85,7 +85,7 @@ class PopulationSynthesizer:
                 self.sun_spec = sun['sun_spec'][:]
 
         if model_label == 'phot':
-            self.rlabel = f'_phot'
+            self.rlabel = '_phot'
 
             with h5py.File(
                 get_data_path('sun_ref.hdf5', subdir='aux'), 'r'
