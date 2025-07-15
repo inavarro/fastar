@@ -29,3 +29,9 @@ packages = ["fastar"]
 
 [tool.setuptools_scm]
 version_file = "fastar/_version.py"
+
+[tool.ruff]
+line-length = 79
+
+[tool.ruff.format]
+quote-style = "single"
