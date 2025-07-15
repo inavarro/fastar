@@ -16,8 +16,8 @@ ax.set_xscale('log')
 ax.set_yscale('log')
 
 # Axis labels
-ax.set_xlabel('m [M$_\odot$]')
-ax.set_ylabel('$\chi (m) \\, \\left( \\frac{dN}{dm} \\right)$')
+ax.set_xlabel(r'm [M$_\odot$]')
+ax.set_ylabel(r'$\chi (m) \\, \\left( \\frac{dN}{dm} \\right)$')
 
 # Custom x-ticks (e.g., linear-style values on log axis)
 custom_ticks = [0.1, 0.25, 0.5, 1, 2, 3, 4, 5]
