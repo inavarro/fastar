@@ -15,8 +15,8 @@ import jax.scipy.integrate as jsp_integrate
 # =============================================================================
 def single_powerlaw_raw(mass, m_min=0.1, m_max=100.0, alpha=2.35):
     """
-    Returns the normalized Salpeter IMF evaluated at `mass` over the range [m_min, m_max],
-    fully JAX-compatible with numerical normalization.
+    Returns the normalized Salpeter IMF evaluated at `mass` over the range
+    [m_min, m_max], fully JAX-compatible with numerical normalization.
 
     Parameters
     ----------
@@ -141,9 +141,9 @@ def flexi_imf_raw(
     mass, m_min=0.1, m_max=100.0, m_peak=0.5, alpha=2.3, beta=2.3
 ):
     """
-    Returns the normalized tapered power-law IMF as described in de Marchi, Paresce &
-    Portegies Zwart (2005), evaluated at `mass` and fully JAX-compatible with
-    numerical normalization.
+    Returns the normalized tapered power-law IMF as described in de Marchi,
+    Paresce & Portegies Zwart (2005), evaluated at `mass` and fully
+    JAX-compatible with numerical normalization.
 
     Parameters
     ----------

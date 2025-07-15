@@ -29,13 +29,15 @@ ages = ssp_spec.iso_ages()
 mets = ssp_spec.iso_mets()
 
 # Get the remaining stellar mass of the SSP (if 1 Msun formed), aka, the
-# fraction of mass in stars compared to the initial stellar mass of the population
+# fraction of mass in stars compared to the initial stellar mass of the
+# population
 fmass = ssp_spec.stellar_mass(
     age=age, met=met, imf_params={'alpha': imf_slope}
 )
 
 # Get the M/L ratio in any given filter (default = V-band)
-# Two ML are returned, one is the stellar ML and the other is the total (stars+ejected gas+remnants)
+# Two ML are returned, one is the stellar ML and the other is the total
+# (stars+ejected gas+remnants)
 data = SvoFps.get_transmission_data('SLOAN/SDSS.g')
 gtrans = np.interp(
     wave, data['Wavelength'], data['Transmission'], left=0, right=0

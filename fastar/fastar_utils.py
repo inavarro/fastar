@@ -89,7 +89,8 @@ def compute_linetrength(wave, flux, index, dat):
     index : str
         Name of the index to compute (must match `dat['NAME']`).
     dat : Table
-        Table with index definitions (Blue_1, Blue_2, Red_1, Red_2, Line_1, Line_2, T).
+        Table with index definitions (Blue_1, Blue_2, Red_1, Red_2, Line_1,
+        Line_2, T).
 
     Returns
     -------

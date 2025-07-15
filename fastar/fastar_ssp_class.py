@@ -358,15 +358,16 @@ class PopulationSynthesizer:
         self, age, met, imf_params=None, filter_response=None, solar_mag=None
     ):
         """
-        Compute the mass-to-light (M/L) ratio of an SSP in a any photometric filter.
+        Compute the mass-to-light ratio of an SSP in a any photometric filter.
 
-        This function synthesizes an SSP spectrum for the given `age` and `met`,
-        integrates the total stellar mass from the IMF, and computes the AB
-        magnitude of the integrated spectrum using the specified filter response.
+        This function synthesizes an SSP spectrum for the given `age` and
+        `met`, integrates the total stellar mass from the IMF, and computes the
+        AB magnitude of the integrated spectrum using the specified filter
+        response.
 
-        If no solar magnitude is provided (`solar_mag=None`), the magnitude of the
-        Sun in the same filter is computed from the stored reference solar spectrum.
-        This allows the M/L ratio to be returned in solar units.
+        If no solar magnitude is provided (`solar_mag=None`), the magnitude of
+        the Sun in the same filter is computed from the stored reference solar
+        spectrum. This allows the M/L ratio to be returned in solar units.
 
         Parameters
         ----------
@@ -375,12 +376,14 @@ class PopulationSynthesizer:
         met : float
             Metallicity [M/H] of the population.
         imf_params : dict, optional
-            Dictionary of parameters for the initial mass function. Default is empty dict.
+            Dictionary of parameters for the initial mass function. Default is
+            empty dict.
         filter_response : array-like or None, optional
-            Response curve sampled over the wavelength grid. If None, the default V-band
-            filter response is used.
+            Response curve sampled over the wavelength grid. If None, the
+            default V-band filter response is used.
         solar_mag : float or None, optional
-            AB magnitude of the Sun in the same filter. If None, computed from solar spectrum.
+            AB magnitude of the Sun in the same filter. If None, computed from
+            solar spectrum.
 
         Returns
         -------
@@ -389,7 +392,8 @@ class PopulationSynthesizer:
             - "ml_stars" : float
                 Stellar mass-to-light ratio (M*/L) in solar units.
             - "ml_total" : float
-                Total mass-to-light ratio (M_total/L), assuming total mass = 1 solar mass.
+                Total mass-to-light ratio (M_total/L), assuming total mass = 1
+                solar mass.
         """
 
         # ensure we always pass a dict to IMF **params

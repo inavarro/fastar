@@ -200,14 +200,14 @@ class SemiResolvedSynthesizer:
         key : PRNGKey
             Random key for JAX sampling.
         out_masses : bool, optional
-            If True, return array of sampled stellar masses instead of the total mass.
-            Default is False.
+            If True, return array of sampled stellar masses instead of the
+            total mass. Default is False.
 
         Returns
         -------
         tuple
-            (wavelengths, spectrum, total stellar mass) or (wavelengths, spectrum,
-            sampled stellar masses) depending on `out_masses`.
+            (wavelengths, spectrum, total stellar mass) or (wavelengths,
+            spectrum, sampled stellar masses) depending on `out_masses`.
         """
         # Interpolate the isochrones at the desired age and metallicity
         imass, iteff, ilogg, ilum = self._get_isochrone(age, met)

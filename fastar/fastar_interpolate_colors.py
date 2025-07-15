@@ -13,7 +13,9 @@ def color_interpolation(
     logg_val, logteff_val, fmet_val, ulogg, uteff_log10, ufmet, grid
 ):
     """
-    Trilinear interpolation of a single color grid over (logg, log10(Teff), [Fe/H]).
+    Trilinear interpolation of a single color grid over stellar parameters.
+
+    These stellar parameters are (logg, log10(Teff), [Fe/H]).
 
     Parameters
     ----------

@@ -100,7 +100,9 @@ Nstars_choices = (
 #         key = keys[i]
 
 #         # Generate spectrum
-#         wave, spec, Mstars = semi_synth.synthesize_large(age=age, met=met, Nstars=Nstars, imf_params={"alpha": imf_slope},  key=key)
+#         wave, spec, Mstars = semi_synth.synthesize_large(
+#             age=age, met=met, Nstars=Nstars, imf_params={"alpha": imf_slope},
+#             key=key)
 
 #         # Measure magnitudes
 #         gband = compute_ab_magnitudes(wave=wave, spectra=spec, fresp=gtrans)
@@ -110,13 +112,18 @@ Nstars_choices = (
 
 #         # spec /= np.mean(spec)  # Normalize
 
-#         theta_list.append([age, met, np.log10(Nstars), np.log10(Mstars)])     # Only include age and met
+#         # Only include age and met
+#         theta_list.append([age, met, np.log10(Nstars), np.log10(Mstars)])
 #         spec_list.append(np.array([gband,rband,iband,zband]))
 
 # theta_array = np.array(theta_list)
 # spec_array = np.array(spec_list)
 
 # f = h5py.File("semiphot_N1_N7.hdf5", "w")
-# f.create_dataset('spectra', data=spec_array.astype(np.float32), compression="gzip", compression_opts=9)
-# f.create_dataset('param', data=theta_array.astype(np.float32), compression="gzip", compression_opts=9)
+# f.create_dataset(
+#     'spectra', data=spec_array.astype(np.float32), compression="gzip",
+#     compression_opts=9)
+# f.create_dataset(
+#     'param', data=theta_array.astype(np.float32), compression="gzip",
+#     compression_opts=9)
 # f.close()

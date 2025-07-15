@@ -36,7 +36,8 @@ phot_wave, phot_spec = ssp_phot.synthesize(age=age, met=met)
 
 # E-MILES
 hdu = fits.open(
-    '/home/imartin/Basti/UN/EMILES_BASTI_BASE_UN/Eun1.30Zp0.06T12.0000_iTp0.00_baseFe.fits'
+    '/home/imartin/'
+    + 'Basti/UN/EMILES_BASTI_BASE_UN/Eun1.30Zp0.06T12.0000_iTp0.00_baseFe.fits'
 )
 
 mspec = hdu[0].data
