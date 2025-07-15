@@ -256,9 +256,11 @@ class SemiResolvedSynthesizer:
         # The function returns wavelength, spectrum and either the total
         # stellar mass of the population or the sampled
         if out_masses:
-            return self.wave, spec, sampled_masses
+            result = (self.wave, spec, sampled_masses)
         else:
-            return self.wave, spec, jnp.sum(sampled_masses)
+            result = (self.wave, spec, jnp.sum(sampled_masses))
+
+        return result
 
     def synthesize_large(
         self, age, met, imf_params, Nstars, key, batch_size=10000
