@@ -5,8 +5,6 @@ import numpy as np
 import jax.random as jr
 import random
 from astroquery.svo_fps import SvoFps
-from astropy.io import ascii
-from matplotlib import pyplot as plt
 
 from fastar.fastar_semi_class import SemiResolvedSynthesizer
 from fastar.fastar_imf import single_powerlaw as unimodal

@@ -2,8 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-import sys
-import os
 
 from astroquery.svo_fps import SvoFps
 from matplotlib import pyplot as plt

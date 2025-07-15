@@ -2,9 +2,10 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-from tqdm import tqdm
-import h5py
-import jax
+
+# from tqdm import tqdm
+# import h5py
+# import jax
 import jax.random as jr
 import random
 
@@ -18,7 +19,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from fastar_imf import single_powerlaw as unimodal
 from fastar_semi_class import SemiResolvedSynthesizer
-from fastar_utils import compute_ab_magnitudes
+# from fastar_utils import compute_ab_magnitudes
 
 
 # --------------------------

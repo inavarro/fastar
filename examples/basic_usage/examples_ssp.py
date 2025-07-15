@@ -5,7 +5,6 @@ import time
 import numpy as np
 from astroquery.svo_fps import SvoFps
 from astropy.io import ascii
-from matplotlib import pyplot as plt
 
 from fastar.fastar_ssp_class import PopulationSynthesizer
 from fastar.fastar_imf import single_powerlaw as unimodal
