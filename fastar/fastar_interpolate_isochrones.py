@@ -4,13 +4,22 @@
 import jax.numpy as jnp
 from jax.scipy.ndimage import map_coordinates
 
+
 # =============================================================================
 # Isochrone Interpolation over (age, [Fe/H])
 # =============================================================================
 
-def isochrone_interpolation(age, met, ages, mets,
-                            mass_ini_data, teff_out_data,
-                            logg_out_data, lumi_out_data):
+
+def isochrone_interpolation(
+    age,
+    met,
+    ages,
+    mets,
+    mass_ini_data,
+    teff_out_data,
+    logg_out_data,
+    lumi_out_data,
+):
     """
     Perform bilinear interpolation on isochrone data over a (age, [Fe/H]) grid
     using JAX's map_coordinates for efficient vectorized sampling.
