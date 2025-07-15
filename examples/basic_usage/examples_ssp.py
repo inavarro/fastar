@@ -4,7 +4,7 @@
 import time
 import numpy as np
 from astroquery.svo_fps import SvoFps
-from astropy.io import ascii
+from astropy.io.ascii import read as ascii_read
 
 from fastar.fastar_ssp_class import PopulationSynthesizer
 from fastar.fastar_imf import single_powerlaw as unimodal
@@ -57,7 +57,7 @@ rmag = compute_ab_magnitudes(wave, spec, rtrans)
 gr_color = gmag - rmag
 
 # Line-strengths
-index_tab = ascii.read('../../aux/indices.def')
+index_tab = ascii_read('../../aux/indices.def')
 hbeta = compute_linetrength(wave, spec, 'Hbeta_o', index_tab)
 
 # Finally, let's get uncertainties for the SSP prediction

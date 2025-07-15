@@ -7,7 +7,7 @@ import jax.numpy as jnp
 import flax.serialization as flax_ser
 
 from functools import partial
-from astropy.io import ascii
+from astropy.io.ascii import read as ascii_read
 from flax import linen as nn
 from jax.scipy.integrate import trapezoid
 
@@ -142,7 +142,7 @@ class SemiResolvedSynthesizer:
             self.logg_out_data = iso['logg_out'][:]
             self.lumi_out_data = iso['lumi_out'][:]
 
-        tab = ascii.read(get_data_path('filters_default.res', subdir='aux'))
+        tab = ascii_read(get_data_path('filters_default.res', subdir='aux'))
         fwave = tab['col1']
         fresp = tab['col2']
         self.filter_response = jnp.interp(
