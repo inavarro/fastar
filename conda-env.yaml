@@ -1,0 +1,32 @@
+# conda cheatsheet:
+#   conda env create -f conda-env.yaml
+#   conda activate fastar
+#   conda deactivate
+#   conda remove -n fastar --all -y
+
+name: fastar
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10.12
+  - pip==23.0.1
+  - pip:
+      - astropy==6.1.7
+      - astroquery==0.4.8
+      - build==1.2.2.post1
+      - flake8==4.0.1
+      - flake8-quotes==3.4.0
+      - flax==0.10.5
+      - h5py==3.12.1
+      - jax==0.6.0
+      - matplotlib==3.10.1
+      - numpy==2.2.5
+      - pylint==2.12.2
+      - pytest==8.3.4
+      - ruff==0.12.3
+      - setuptools==65.5.1
+      - setuptools_scm==8.3.1
+      - Sphinx==4.3.2
+      - sphinx-rtd-theme==1.3.0
+      - tqdm==4.67.1
+      - wheel==0.41.1
