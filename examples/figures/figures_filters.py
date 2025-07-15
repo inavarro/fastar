@@ -73,10 +73,15 @@ plt.figure(figsize=(12, 6))
 
 
 # Normalize and plot filter response curves as shaded regions
-def plot_filter(wave, response, color, label):
+def plot_filter(wave_array, response, color, label):
     norm_response = response / response.max() * 0.5 * np.max(mspec)
     plt.fill_between(
-        wave, 0, norm_response * 50000, color=color, alpha=0.2, label=label
+        wave_array,
+        0,
+        norm_response * 50000,
+        color=color,
+        alpha=0.2,
+        label=label,
     )
 
 
