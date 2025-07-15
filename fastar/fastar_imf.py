@@ -4,6 +4,7 @@
 import jax.numpy as jnp
 import jax.scipy.integrate as jsp_integrate
 
+
 # =============================================================================
 # Pre-defined IMF parametrizations
 # =============================================================================

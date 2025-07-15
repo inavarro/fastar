@@ -4,6 +4,7 @@
 import jax.numpy as jnp
 from jax.scipy.integrate import trapezoid
 
+
 # =============================================================================
 # Photometric and Spectroscopic Utilities for FaStar
 # =============================================================================

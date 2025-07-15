@@ -1,20 +1,21 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+from functools import partial
+
 import h5py
+import flax.serialization as flax_ser
 import jax
 import jax.numpy as jnp
-import flax.serialization as flax_ser
-
-from functools import partial
 from astropy.io.ascii import read as ascii_read
 from flax import linen as nn
 from jax.scipy.integrate import trapezoid
 
-from fastar.path_utils import get_data_path
 from fastar.fastar_imf import single_powerlaw as unimodal
-from fastar.fastar_interpolate_isochrones import isochrone_interpolation
 from fastar.fastar_interpolate_colors import color_interpolation
+from fastar.fastar_interpolate_isochrones import isochrone_interpolation
+from fastar.path_utils import get_data_path
+
 
 # =============================================================================
 # Solar constants

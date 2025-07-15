@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+from functools import partial
+
 import h5py
+import flax.serialization as flax_ser
 import jax
 import jax.numpy as jnp
-import flax.serialization as flax_ser
-
-from functools import partial
 from flax import linen as nn
 
 from fastar.path_utils import get_data_path

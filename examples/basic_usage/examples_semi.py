@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import numpy as np
-import jax.random as jr
 import random
+
+import jax.random as jr
+import numpy as np
 from astroquery.svo_fps import SvoFps
 
-from fastar.fastar_semi_class import SemiResolvedSynthesizer
 from fastar.fastar_imf import single_powerlaw as unimodal
+from fastar.fastar_semi_class import SemiResolvedSynthesizer
 from fastar.fastar_utils import compute_ab_magnitudes
+
 
 # ---------------------------------------------------
 # Spectroscopic predictions

@@ -4,6 +4,7 @@
 import jax.numpy as jnp
 from jax.scipy.ndimage import map_coordinates
 
+
 # =============================================================================
 # Isochrone Interpolation over (age, [Fe/H])
 # =============================================================================

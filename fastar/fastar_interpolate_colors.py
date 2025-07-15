@@ -4,6 +4,7 @@
 import jax.numpy as jnp
 from jax.scipy.ndimage import map_coordinates
 
+
 # =============================================================================
 # Color Interpolation over (logg, log10(Teff), [Fe/H])
 # =============================================================================

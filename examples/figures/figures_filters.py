@@ -2,13 +2,13 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-
+from astropy.io import fits
 from astroquery.svo_fps import SvoFps
 from matplotlib import pyplot as plt
-from astropy.io import fits
 
-from fastar.fastar_ssp_class import PopulationSynthesizer
 from fastar.fastar_imf import single_powerlaw as unimodal
+from fastar.fastar_ssp_class import PopulationSynthesizer
+
 
 # ---------------------------------------------------
 # Spectroscopic predictions

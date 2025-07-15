@@ -2,13 +2,15 @@
 # -*- coding: utf-8 -*-
 
 import time
-import numpy as np
-from astroquery.svo_fps import SvoFps
-from astropy.io.ascii import read as ascii_read
 
-from fastar.fastar_ssp_class import PopulationSynthesizer
+import numpy as np
+from astropy.io.ascii import read as ascii_read
+from astroquery.svo_fps import SvoFps
+
 from fastar.fastar_imf import single_powerlaw as unimodal
+from fastar.fastar_ssp_class import PopulationSynthesizer
 from fastar.fastar_utils import compute_ab_magnitudes, compute_linetrength
+
 
 # ---------------------------------------------------
 # Spectroscopic predictions
