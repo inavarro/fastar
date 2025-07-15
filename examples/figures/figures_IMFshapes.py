@@ -7,7 +7,7 @@ import numpy as np
 
 from fastar import fastar_imf
 
-mass_arr = np.linspace(0.1,5)
+mass_arr = np.linspace(0.1, 5)
 
 fig, ax = plt.subplots()
 
@@ -29,24 +29,23 @@ for tick in custom_ticks:
     ax.axvline(tick, color='gray', linestyle='--', linewidth=0.5, zorder=0)
 
 # Let's plot some IMFs
-imf = fastar_imf.single_powerlaw(mass_arr,{})
-ax.plot(mass_arr,imf, label='Single power law',linewidth=1.5)
+imf = fastar_imf.single_powerlaw(mass_arr, {})
+ax.plot(mass_arr, imf, label='Single power law', linewidth=1.5)
 
-imf = fastar_imf.broken_powerlaw(mass_arr,{})
-ax.plot(mass_arr,imf, label='Broken power law',linewidth=1.5)
+imf = fastar_imf.broken_powerlaw(mass_arr, {})
+ax.plot(mass_arr, imf, label='Broken power law', linewidth=1.5)
 
-imf = fastar_imf.flexi(mass_arr,{'beta':2})
-ax.plot(mass_arr,imf, label='Flexi IMF',linewidth=1.5)
+imf = fastar_imf.flexi(mass_arr, {'beta': 2})
+ax.plot(mass_arr, imf, label='Flexi IMF', linewidth=1.5)
 
-imf = fastar_imf.chabrier(mass_arr,{})
-ax.plot(mass_arr,imf, label='Chabrier IMF',linewidth=1.5)
+imf = fastar_imf.chabrier(mass_arr, {})
+ax.plot(mass_arr, imf, label='Chabrier IMF', linewidth=1.5)
 
-imf = fastar_imf.kroupa(mass_arr,{})
-ax.plot(mass_arr,imf, label='Kroupa IMF',linewidth=1.5)
+imf = fastar_imf.kroupa(mass_arr, {})
+ax.plot(mass_arr, imf, label='Kroupa IMF', linewidth=1.5)
 
 ax.legend()
 
 fig.tight_layout()
 fig.savefig('../../figures/IMF_shapes.pdf')
 plt.close('all')
-

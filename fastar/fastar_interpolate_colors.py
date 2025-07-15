@@ -8,9 +8,10 @@ from jax.scipy.ndimage import map_coordinates
 # Color Interpolation over (logg, log10(Teff), [Fe/H])
 # =============================================================================
 
-def color_interpolation(logg_val, logteff_val, fmet_val, 
-                      ulogg, uteff_log10, ufmet, 
-                      grid):
+
+def color_interpolation(
+    logg_val, logteff_val, fmet_val, ulogg, uteff_log10, ufmet, grid
+):
     """
     Trilinear interpolation of a single color grid over (logg, log10(Teff), [Fe/H]).
 

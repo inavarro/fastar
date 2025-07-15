@@ -23,6 +23,7 @@ sun_mbol = 4.70
 sun_bvc = -0.12
 sun_vmag = sun_mbol - sun_bvc
 
+
 # =============================================================================
 # PCA-based Neural Network Model Definition
 # =============================================================================
@@ -38,12 +39,15 @@ class PCARegressor(nn.Module):
     activation_type : str
         Type of activation function ('relu', 'tanh', 'gelu').
     """
+
     output_dim: int = 16
     activation_type: str = 'gelu'
 
     @nn.compact
     def __call__(self, x):
-        act = {'relu': nn.relu, 'tanh': nn.tanh, 'gelu': nn.gelu}[self.activation_type]
+        act = {'relu': nn.relu, 'tanh': nn.tanh, 'gelu': nn.gelu}[
+            self.activation_type
+        ]
         x = nn.Dense(64)(x)
         x = act(x)
         x = nn.Dense(128)(x)
@@ -55,6 +59,7 @@ class PCARegressor(nn.Module):
         x = nn.Dense(self.output_dim)(x)
         return x
 
+
 # =============================================================================
 # Semi-Resolved Population Synthesizer Class
 # =============================================================================
@@ -64,6 +69,7 @@ class SemiResolvedSynthesizer:
     spectroscopic and photometric predictions with a PCA-based stellar spectral
     model and a stochastic IMF sampling.
     """
+
     def __init__(self, model_label=None, imf_function=None):
         self.npc = 16
         self.activation_type = 'gelu'
@@ -71,16 +77,22 @@ class SemiResolvedSynthesizer:
         if model_label is None:
             self.rlabel = f'_spec'
 
-            with h5py.File(get_data_path('sun_ref.hdf5',subdir="aux"), 'r') as sun:
+            with h5py.File(
+                get_data_path('sun_ref.hdf5', subdir='aux'), 'r'
+            ) as sun:
                 self.sun_spec = sun['sun_spec'][:]
 
         if model_label == 'phot':
             self.rlabel = f'_phot'
 
-            with h5py.File(get_data_path('sun_ref.hdf5',subdir="aux"), 'r') as sun:
+            with h5py.File(
+                get_data_path('sun_ref.hdf5', subdir='aux'), 'r'
+            ) as sun:
                 self.sun_spec = sun['sun_phot'][:]
 
-        self.imf_function = imf_function if imf_function is not None else unimodal
+        self.imf_function = (
+            imf_function if imf_function is not None else unimodal
+        )
 
         self._load_model()
         self._load_auxiliary_data()
@@ -89,12 +101,22 @@ class SemiResolvedSynthesizer:
         """
         Load trained PCA regressor, scalers, and PCA components.
         """
-        model = PCARegressor(output_dim=self.npc, activation_type=self.activation_type)
-        with open(get_data_path(f"pca_regressor{self.rlabel}.flax",subdir="aux"), "rb") as f:
-            self.params = flax_ser.from_bytes(model.init(jax.random.PRNGKey(0), jnp.ones((1, 3))), f.read())
+        model = PCARegressor(
+            output_dim=self.npc, activation_type=self.activation_type
+        )
+        with open(
+            get_data_path(f'pca_regressor{self.rlabel}.flax', subdir='aux'),
+            'rb',
+        ) as f:
+            self.params = flax_ser.from_bytes(
+                model.init(jax.random.PRNGKey(0), jnp.ones((1, 3))), f.read()
+            )
         self.model = model
 
-        with h5py.File(get_data_path(f"training_artifacts{self.rlabel}.h5",subdir="aux"), "r") as f:
+        with h5py.File(
+            get_data_path(f'training_artifacts{self.rlabel}.h5', subdir='aux'),
+            'r',
+        ) as f:
             self.scaler_X_mean = f['scaler_X/mean_'][:]
             self.scaler_X_scale = f['scaler_X/scale_'][:]
             self.scaler_Y_mean = f['scaler_Y/mean_'][:]
@@ -106,10 +128,13 @@ class SemiResolvedSynthesizer:
 
     def _load_auxiliary_data(self):
         """
-        Load isochrones, V-band filter response, bolometric corrections, 
+        Load isochrones, V-band filter response, bolometric corrections,
         and optimized age and metallicity samplings.
         """
-        with h5py.File(get_data_path("BASTI-IAC_isochrones.hdf5",subdir="isochrones"), 'r') as iso:
+        with h5py.File(
+            get_data_path('BASTI-IAC_isochrones.hdf5', subdir='isochrones'),
+            'r',
+        ) as iso:
             self.mets = iso['mets'][:]
             self.ages = iso['ages'][:]
             self.mass_ini_data = iso['mass_ini'][:]
@@ -117,35 +142,45 @@ class SemiResolvedSynthesizer:
             self.logg_out_data = iso['logg_out'][:]
             self.lumi_out_data = iso['lumi_out'][:]
 
-        tab = ascii.read(get_data_path("filters_default.res",subdir="aux"))
+        tab = ascii.read(get_data_path('filters_default.res', subdir='aux'))
         fwave = tab['col1']
         fresp = tab['col2']
-        self.filter_response = jnp.interp(self.wave, fwave, fresp, left=0, right=0)
+        self.filter_response = jnp.interp(
+            self.wave, fwave, fresp, left=0, right=0
+        )
 
-        with h5py.File(get_data_path("WORTHEY11_colors.hdf5",subdir="aux"), 'r') as color:
+        with h5py.File(
+            get_data_path('WORTHEY11_colors.hdf5', subdir='aux'), 'r'
+        ) as color:
             self.bcv_grid = color['bcv'][:]
             self.fmet_array = color['ufmet'][:]
             self.logg_array = color['ulogg'][:]
             self.teff_log10_array = color['uteff'][:]
 
-        with h5py.File(get_data_path("pop_iso.hdf5",subdir="aux"), 'r') as color:
+        with h5py.File(
+            get_data_path('pop_iso.hdf5', subdir='aux'), 'r'
+        ) as color:
             self.iso_ages = color['grid_ages'][:]
             self.iso_mets = color['grid_ages'][:]
 
     @partial(jax.jit, static_argnames=['self'])
     def _predict_spectrum(self, logg, teff, fmet):
         """
-        Predict stellar spectra given logg, Teff, and [Fe/H] using the 
+        Predict stellar spectra given logg, Teff, and [Fe/H] using the
         PCA regressor.
         """
         inputs = jnp.stack([logg, teff, fmet], axis=-1)
         input_scaled = (inputs - self.scaler_X_mean) / self.scaler_X_scale
         pca_scaled = self.model.apply(self.params, input_scaled)
         pca_coeffs = pca_scaled * self.scaler_Y_scale + self.scaler_Y_mean
-        spectra = jnp.dot(pca_coeffs, self.pca_components) + self.pca_mean + self.mean_spectrum
+        spectra = (
+            jnp.dot(pca_coeffs, self.pca_components)
+            + self.pca_mean
+            + self.mean_spectrum
+        )
 
         return self._softplus(spectra)
-    
+
     @partial(jax.jit, static_argnames=['self', 'Nstars'])
     def synthesize(self, age, met, imf_params, Nstars, key, out_masses=False):
         """
@@ -171,31 +206,42 @@ class SemiResolvedSynthesizer:
         Returns
         -------
         tuple
-            (wavelengths, spectrum, total stellar mass) or (wavelengths, spectrum, 
+            (wavelengths, spectrum, total stellar mass) or (wavelengths, spectrum,
             sampled stellar masses) depending on `out_masses`.
         """
         # Interpolate the isochrones at the desired age and metallicity
         imass, iteff, ilogg, ilum = self._get_isochrone(age, met)
 
         # Stochastically sample the IMF
-        sampled_masses = self._stochastic_IMF_sampling(imass, imf_params, Nstars, key)
+        sampled_masses = self._stochastic_IMF_sampling(
+            imass, imf_params, Nstars, key
+        )
 
         # Evaluate the isochrone at the interpolated masses
         iteff_interp = jnp.interp(sampled_masses, imass, iteff)
         ilogg_interp = jnp.interp(sampled_masses, imass, ilogg)
-        ilum_interp  = jnp.interp(sampled_masses, imass, ilum)
+        ilum_interp = jnp.interp(sampled_masses, imass, ilum)
 
         # Calculate the stellar spectra
-        spectra = self._predict_spectrum(ilogg_interp, iteff_interp, jnp.full_like(iteff_interp, met))
+        spectra = self._predict_spectrum(
+            ilogg_interp, iteff_interp, jnp.full_like(iteff_interp, met)
+        )
 
         # Get the V-band magnitudes of the predicted stellar spectra (they are
         # normalized to have a mean flux of 1)
         magnitudes = self._compute_ab_magnitudes(spectra)
 
         # Calculate the bolometric corrections
-        bcv_val = color_interpolation(ilogg_interp, iteff_interp, jnp.full_like(iteff_interp, met),
-                                    self.logg_array, self.teff_log10_array, self.fmet_array , self.bcv_grid)
-        
+        bcv_val = color_interpolation(
+            ilogg_interp,
+            iteff_interp,
+            jnp.full_like(iteff_interp, met),
+            self.logg_array,
+            self.teff_log10_array,
+            self.fmet_array,
+            self.bcv_grid,
+        )
+
         # Scale the predicted stellar spectra so they math their theoretical
         # luminosities
         vmags = -2.5 * ilum_interp - bcv_val
@@ -203,20 +249,22 @@ class SemiResolvedSynthesizer:
         corr = 1 / (10 ** ((magnitudes - mtarg) / -2.5))
 
         # Add the flux of all the spectra. There is no IMF weighting here
-        # since it naturally comes from the stochastic sampling 
+        # since it naturally comes from the stochastic sampling
         spec = jnp.sum(spectra * corr[:, None], axis=0)
-        
-        # The function returns wavelength, spectrum and either the total 
+
+        # The function returns wavelength, spectrum and either the total
         # stellar mass of the population or the sampled
         if out_masses:
             return self.wave, spec, sampled_masses
-        else: 
+        else:
             return self.wave, spec, jnp.sum(sampled_masses)
 
-    def synthesize_large(self, age, met, imf_params, Nstars, key, batch_size=10000):
+    def synthesize_large(
+        self, age, met, imf_params, Nstars, key, batch_size=10000
+    ):
         """
         Generate synthetic population spectrum using chunked IMF sampling
-        for large numbers of stars. This allows calculating predictions 
+        for large numbers of stars. This allows calculating predictions
         for a large number of stars without using too much memory
         """
         n_batches = int(Nstars) // int(batch_size)
@@ -226,23 +274,29 @@ class SemiResolvedSynthesizer:
         keys = jax.random.split(key, n_total_chunks)
 
         # First batch
-        wave, spec_total, mass_total = self.synthesize(age, met, imf_params, batch_size, keys[0])
+        wave, spec_total, mass_total = self.synthesize(
+            age, met, imf_params, batch_size, keys[0]
+        )
 
         # Loop over full-size batches
         for i in range(1, n_batches):
-            _, spec_chunk, mass_chunk = self.synthesize(age, met, imf_params, batch_size, keys[i])
+            _, spec_chunk, mass_chunk = self.synthesize(
+                age, met, imf_params, batch_size, keys[i]
+            )
             spec_total += spec_chunk
             mass_total += mass_chunk
 
         # Final chunk (remainder)
         if remainder > 0:
-            _, spec_chunk, mass_chunk = self.synthesize(age, met, imf_params, remainder, keys[-1])
+            _, spec_chunk, mass_chunk = self.synthesize(
+                age, met, imf_params, remainder, keys[-1]
+            )
             spec_total += spec_chunk
             mass_total += mass_chunk
 
         return wave, spec_total, mass_total
 
-    @partial(jax.jit, static_argnames=['self','Nstars'])
+    @partial(jax.jit, static_argnames=['self', 'Nstars'])
     def _stochastic_IMF_sampling(self, imass, imf_params, Nstars, key):
         """
         Stochastically sample stellar masses from an IMF assuming
@@ -251,7 +305,7 @@ class SemiResolvedSynthesizer:
 
         # Normalize the IMF to a total number of stars equal to 1
         # Note this normalization is different than the one used
-        # for the population synthesis as there the normalizing 
+        # for the population synthesis as there the normalizing
         # quantity is the total mass (not the number of stars)
         mass_grid = jnp.linspace(imass.min(), imass.max(), 5000)
         imf_vals = self.imf_function(mass_grid, imf_params)
@@ -272,7 +326,9 @@ class SemiResolvedSynthesizer:
         Compute V-band AB magnitudes of a given spectrum (in Flambda)
         """
         denominator = trapezoid(self.filter_response / self.wave, x=self.wave)
-        numerators = trapezoid(spectra * self.filter_response * self.wave, axis=1, x=self.wave)
+        numerators = trapezoid(
+            spectra * self.filter_response * self.wave, axis=1, x=self.wave
+        )
         flux_density = numerators / denominator
         return -2.5 * jnp.log10(flux_density) - 2.406
 
@@ -282,16 +338,21 @@ class SemiResolvedSynthesizer:
         Smooth activation function with soft floor to prevent
         any negative flux in the spectrum of extreme stars
         """
-        return (1.0/beta) * jnp.logaddexp(0.0, beta*x)
-    
+        return (1.0 / beta) * jnp.logaddexp(0.0, beta * x)
+
     @partial(jax.jit, static_argnames=['self'])
     def _get_isochrone(self, age, met):
         """
         Retrieve interpolated isochrone for given age and metallicity.
         """
         imass, iteff, ilogg, ilum = isochrone_interpolation(
-            age, met, self.ages, self.mets,
-            self.mass_ini_data, self.teff_out_data,
-            self.logg_out_data, self.lumi_out_data
+            age,
+            met,
+            self.ages,
+            self.mets,
+            self.mass_ini_data,
+            self.teff_out_data,
+            self.logg_out_data,
+            self.lumi_out_data,
         )
         return imass, iteff, ilogg, ilum
