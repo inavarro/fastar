@@ -45,8 +45,8 @@ pip install -e .
 ## ⚡️ Quick Start
 
 ```python
-from fastar.fastar_ssp_class import PopulationSynthesizer 
-from fastar.fastar_imf import kroupa 
+from fastar.imf.named_imf.kroupa import kroupa 
+from fastar.ssp import PopulationSynthesizer 
 
 ssp = PopulationSynthesizer(imf_function=kroupa)
 wave, spec = ssp.synthesize(age=10, met=0)

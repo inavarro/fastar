@@ -9,7 +9,7 @@ import jax
 import jax.numpy as jnp
 from flax import linen as nn
 
-from fastar.path_utils import get_data_path
+from fastar.tools.assets import get_asset_path
 
 
 # =============================================================================
@@ -76,8 +76,7 @@ class StellarSynthesizer:
             output_dim=self.npc, activation_type=self.activation_type
         )
         with open(
-            get_data_path(f'pca_regressor{self.rlabel}.flax', subdir='aux'),
-            'rb',
+            get_asset_path(f'pca_regressor{self.rlabel}.flax'), 'rb'
         ) as f:
             self.params = flax_ser.from_bytes(
                 model.init(jax.random.PRNGKey(0), jnp.ones((1, 3))), f.read()
@@ -85,8 +84,7 @@ class StellarSynthesizer:
         self.model = model
 
         with h5py.File(
-            get_data_path(f'training_artifacts{self.rlabel}.h5', subdir='aux'),
-            'r',
+            get_asset_path(f'training_artifacts{self.rlabel}.h5'), 'r'
         ) as f:
             self.scaler_X_mean = f['scaler_X/mean_'][:]
             self.scaler_X_scale = f['scaler_X/scale_'][:]
