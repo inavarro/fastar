@@ -7,8 +7,19 @@ authors = [
 ]
 urls = { "homepage" = "https://github.com/inavarro/fastar" }
 readme = "README.md"
-license = { text = "MIT" }
+license = "MIT"
+license-files = ["LICENSE"]
 requires-python = ">=3.10.12"
+classifiers = [
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Astronomy",
+    "Topic :: Scientific/Engineering :: Physics",
+]
+keywords = [
+    "astronomy",
+    "astrophysics",
+    "science",
+]
 dependencies = [
   "astropy>=6.1.7",
   "astroquery>=0.4.8",
