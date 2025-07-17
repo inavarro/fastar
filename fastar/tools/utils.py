@@ -114,20 +114,20 @@ def compute_linetrength(wave, flux, index, dat):
 
     blue_width = (
         dat[dat['NAME'] == index]['Blue_1'][0]
-        + dat[dat['NAME'] == index]['Blue_2'][0]
+        + dat[dat['NAME'] == index]['Blue_2'][0]  # noqa: W503
     ) / 2.0
     red_width = (
         dat[dat['NAME'] == index]['Red_1'][0]
-        + dat[dat['NAME'] == index]['Red_2'][0]
+        + dat[dat['NAME'] == index]['Red_2'][0]  # noqa: W503
     ) / 2.0
 
     blue_c /= (
         dat[dat['NAME'] == index]['Blue_2'][0]
-        - dat[dat['NAME'] == index]['Blue_1'][0]
+        - dat[dat['NAME'] == index]['Blue_1'][0]  # noqa: W503
     )
     red_c /= (
         dat[dat['NAME'] == index]['Red_2'][0]
-        - dat[dat['NAME'] == index]['Red_1'][0]
+        - dat[dat['NAME'] == index]['Red_1'][0]  # noqa: W503
     )
 
     mval = (red_c - blue_c) / (red_width - blue_width)
@@ -138,13 +138,9 @@ def compute_linetrength(wave, flux, index, dat):
         mval * (dat[dat['NAME'] == index]['Line_2'][0] - blue_width) + blue_c
     )
 
-    cont = (
-        0.5
-        * (cval_1 + cval_2)
-        * (
-            dat[dat['NAME'] == index]['Line_2'][0]
-            - dat[dat['NAME'] == index]['Line_1'][0]
-        )
+    cont = (0.5 * (cval_1 + cval_2)) * (
+        dat[dat['NAME'] == index]['Line_2'][0]
+        - dat[dat['NAME'] == index]['Line_1'][0]  # noqa: W503
     )
 
     band_c = flux_sum(
@@ -157,7 +153,7 @@ def compute_linetrength(wave, flux, index, dat):
     if dat[dat['NAME'] == index]['T'] == 2:
         index_val = (1.0 - (band_c / cont)) * (
             dat[dat['NAME'] == index]['Line_2'][0]
-            - dat[dat['NAME'] == index]['Line_1'][0]
+            - dat[dat['NAME'] == index]['Line_1'][0]  # noqa: W503
         )
     elif dat[dat['NAME'] == index]['T'] == 1:
         index_val = -2.5 * jnp.log10(band_c / cont)

@@ -34,10 +34,11 @@ def main():
     phot_wave, phot_spec = ssp_phot.synthesize(age=age, met=met)
 
     # E-MILES
-    hdu = fits.open(
-        '/home/imartin/'
-        + 'Basti/UN/EMILES_BASTI_BASE_UN/Eun1.30Zp0.06T12.0000_iTp0.00_baseFe.fits'
+    filename = (
+        '/home/imartin/Basti/UN/EMILES_BASTI_BASE_UN/'
+        + 'Eun1.30Zp0.06T12.0000_iTp0.00_baseFe.fits'  # noqa: W503
     )
+    hdu = fits.open(filename)
 
     mspec = hdu[0].data
     mwave = 1680 + np.arange(53689) * 0.9
@@ -99,8 +100,10 @@ def main():
     )
     plt.plot(
         phot_wave,
-        phot_spec
-        / np.mean(phot_spec[(phot_wave > 5000) & (phot_wave < 5100)]),
+        (
+            phot_spec
+            / np.mean(phot_spec[(phot_wave > 5000) & (phot_wave < 5100)])  # noqa: E501,W503
+        ),
         label='Photometric SSP',
         color='blue',
         lw=1.2,
