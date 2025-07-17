@@ -6,20 +6,31 @@
 
 # FaStar
 
+**FaStar** is a fully differentiable, evolutionary stellar population synthesis
+code. It generates single stellar population (SSP) model predictions for both
+spectroscopic —from ~3,500 Å to ~7,400 Å— and spectral energy distribution
+(SED) —from ~2,000 Å to ~11,500 Å— measurements.
 
-**FaStar** is a fully differentiable, evolutionary stellar population synthesis code. It generates single stellar population (SSP) model predictions for both spectroscopic (from ~3500 Å to ~7,400 Å) and SED (from ~2,000 Å to ~11,500 Å) measurements.
+Unlike traditional SSP models, **FaStar** produces continuous predictions for
+any age, metallicity and initial mass function (IMF) value. It also supports
+SSP model uncertainty estimation through Monte Carlo sampling.
 
-Unlike traditional SSP models, **FaStar** produces continuous predictions for any  age, metallicity, and initial mass function (IMF) value. It also supports SSP model uncertainty estimation through Monte Carlo sampling.
-
-Critically, **FaStar** can also generate on the fly semi-resolved SSP models assuming the IMF is not fully sampled, i.e., when the number of stars per resolution element is not large enough. 
+Critically, **FaStar** can also generate on the fly semi-resolved SSP models
+assuming the IMF is not fully sampled, i.e., when the number of stars per
+resolution element is not large enough.
 
 ---
+
 ## ⚙️ Ingredients
 
-- **[MILES](https://ui.adsabs.harvard.edu/abs/2006MNRAS.371..703S)** — empirical stellar library  
-- **[BOSZ](https://ui.adsabs.harvard.edu/abs/2024A%2526A...688A.197M)** — theoretical stellar library  
-- **[Worthey & Lee (2011)](https://ui.adsabs.harvard.edu/abs/2011ApJS..193....1W)** — bolometric correction tables  
+- **[MILES](https://ui.adsabs.harvard.edu/abs/2006MNRAS.371..703S)** —
+  empirical stellar library
+- **[BOSZ](https://ui.adsabs.harvard.edu/abs/2024A%26A...688A.197M)** —
+  theoretical stellar library
+- **[Worthey & Lee (2011)](https://ui.adsabs.harvard.edu/abs/2011ApJS..193....1W)** —
+  bolometric correction tables
 - **[BaSTI-IAC](http://basti-iac.oa-abruzzo.inaf.it/)** — isochrones
+
 ---
 
 ## 🚀 Features
@@ -32,12 +43,10 @@ Critically, **FaStar** can also generate on the fly semi-resolved SSP models ass
 
 ## 📦 Installation
 
-To install in development mode:
-
 ```bash
-git clone https://github.com/inavarro/fastar.git
-cd fastar
-pip install -e .
+git clone git@github.com:inavarro/fastar.git
+cd fastar/
+pip install .
 ```
 
 ---
@@ -45,9 +54,9 @@ pip install -e .
 ## ⚡️ Quick Start
 
 ```python
-from fastar.imf.named_imf.kroupa import kroupa 
-from fastar.ssp import PopulationSynthesizer 
+from fastar.imf.named_imf.kroupa import kroupa
+from fastar.ssp import PopulationSynthesizer
 
 ssp = PopulationSynthesizer(imf_function=kroupa)
-wave, spec = ssp.synthesize(age=10, met=0)
+wave, flux = ssp.synthesize(age=10.0, met=0.0)
 ```
