@@ -67,3 +67,19 @@ class BaseSynthesizer:
         any negative flux in the spectrum of extreme stars
         """
         return (1.0 / beta) * jnp.logaddexp(0.0, beta * input_flux)
+
+    @partial(jax.jit, static_argnames=['self'])
+    def _predict_spectrum(self, logg, teff, fmet):
+        """
+        Predict stellar spectra given logg, Teff, and [Fe/H] using the
+        PCA regressor.
+        """
+        inputs = jnp.stack([logg, teff, fmet], axis=-1)
+        input_scaled = (inputs - self.scaler_x_mean) / self.scaler_x_scale
+        pca_scaled = self.model.apply(self.params, input_scaled)
+        pca_coeffs = pca_scaled * self.scaler_y_scale + self.scaler_y_mean
+        spectra = (
+            jnp.dot(pca_coeffs, self.pca_components) + self.pca_mean
+        ) + self.mean_spectrum
+
+        return self._softplus(spectra)

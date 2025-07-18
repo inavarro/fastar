@@ -11,7 +11,6 @@ from jax.scipy.integrate import trapezoid
 
 from fastar.core.ssp import SspSynthesizer
 from fastar.interpolate.color import color_interpolation
-from fastar.interpolate.isochrone import isochrone_interpolation
 
 
 class IntegratedSspSynthesizer(SspSynthesizer):
@@ -185,16 +184,7 @@ class IntegratedSspSynthesizer(SspSynthesizer):
         imf_params = imf_params or {}
 
         # Interpolate isochrone at given age and metallicity
-        imass, _, _, _ = isochrone_interpolation(
-            age,
-            met,
-            self.ages,
-            self.mets,
-            self.mass_ini_data,
-            self.teff_out_data,
-            self.logg_out_data,
-            self.lumi_out_data,
-        )
+        imass, _, _, _ = self._get_isochrone(age, met)
 
         # Evaluate IMF (can be overridden per call)
         imf_val = self.imf_function(imass, imf_params)

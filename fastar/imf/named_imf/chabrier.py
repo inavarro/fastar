@@ -1,13 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+# pylint: disable=duplicate-code
+# *** Duplicate code will be addressed in future IMF refactoring ***
+
+"""
+Chabrier 2003 IMF (https://arxiv.org/abs/astro-ph/0304382)
+"""
+
 import jax.numpy as jnp
 import jax.scipy.integrate as jsp_integrate
 
 
-# =============================================================================
-# 4. Chabrier 2003 IMF (https://arxiv.org/abs/astro-ph/0304382)
-# =============================================================================
 def chabrier_imf_raw(mass, m_min=0.1, m_max=100.0):
     """
     Returns the normalized Chabrier IMF evaluated at `mass`,

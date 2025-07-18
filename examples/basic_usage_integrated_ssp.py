@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+# pylint: disable=duplicate-code
+# *** Duplicate code could be allowed for examples ***
+
 import time
 
 import numpy as np

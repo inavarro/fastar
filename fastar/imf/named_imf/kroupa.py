@@ -1,13 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+# pylint: disable=duplicate-code
+# *** Duplicate code will be addressed in future IMF refactoring ***
+
+"""
+Kroupa 2001 (https://arxiv.org/abs/astro-ph/0009005)
+"""
+
 import jax.numpy as jnp
 import jax.scipy.integrate as jsp_integrate
 
 
-# =============================================================================
-# 5. Kroupa 2001 (https://arxiv.org/abs/astro-ph/0009005)
-# =============================================================================
 def kroupa_imf_raw(mass, m_min=0.1, m_max=100.0):
     """
     Returns the normalized Kroupa IMF evaluated at `mass`,

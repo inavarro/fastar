@@ -4,7 +4,6 @@
 from functools import partial
 
 import jax
-import jax.numpy as jnp
 
 from fastar.core.base import BaseSynthesizer
 
@@ -20,12 +19,4 @@ class StellarSynthesizer(BaseSynthesizer):
         Predict stellar spectra given logg, Teff, and [Fe/H] using the
         PCA regressor.
         """
-        inputs = jnp.stack([logg, teff, fmet], axis=-1)
-        input_scaled = (inputs - self.scaler_x_mean) / self.scaler_x_scale
-        pca_scaled = self.model.apply(self.params, input_scaled)
-        pca_coeffs = pca_scaled * self.scaler_y_scale + self.scaler_y_mean
-        spectra = (
-            jnp.dot(pca_coeffs, self.pca_components) + self.pca_mean
-        ) + self.mean_spectrum
-
-        return self._softplus(spectra)
+        return self._predict_spectrum(logg, teff, fmet)
