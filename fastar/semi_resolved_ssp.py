@@ -18,8 +18,10 @@ class SemiResolvedSspSynthesizer(SspSynthesizer):
     model and a stochastic IMF sampling.
     """
 
-    @partial(jax.jit, static_argnames=['self', 'Nstars'])
-    def synthesize(self, age, met, imf_params, Nstars, key, out_masses=False):
+    @partial(jax.jit, static_argnames=['self', 'num_stars'])
+    def synthesize(
+        self, age, met, imf_params, num_stars, key, out_masses=False
+    ):
         """
         Generate synthetic semi-resolved population spectrum for a given
         age and metallicity.
@@ -32,7 +34,7 @@ class SemiResolvedSspSynthesizer(SspSynthesizer):
             Metallicity [M/H].
         imf_params : dict
             Parameters for the initial mass function.
-        Nstars : int
+        num_stars : int
             Number of stars to sample.
         key : PRNGKey
             Random key for JAX sampling.
@@ -50,8 +52,8 @@ class SemiResolvedSspSynthesizer(SspSynthesizer):
         imass, iteff, ilogg, ilum = self._get_isochrone(age, met)
 
         # Stochastically sample the IMF
-        sampled_masses = self._stochastic_IMF_sampling(
-            imass, imf_params, Nstars, key
+        sampled_masses = self._stochastic_imf_sampling(
+            imass, imf_params, num_stars, key
         )
 
         # Evaluate the isochrone at the interpolated masses
@@ -99,15 +101,15 @@ class SemiResolvedSspSynthesizer(SspSynthesizer):
         return result
 
     def synthesize_large(
-        self, age, met, imf_params, Nstars, key, batch_size=10000
+        self, age, met, imf_params, num_stars, key, batch_size=10000
     ):
         """
         Generate synthetic population spectrum using chunked IMF sampling
         for large numbers of stars. This allows calculating predictions
         for a large number of stars without using too much memory
         """
-        n_batches = int(Nstars) // int(batch_size)
-        remainder = int(Nstars) % int(batch_size)
+        n_batches = int(num_stars) // int(batch_size)
+        remainder = int(num_stars) % int(batch_size)
         n_total_chunks = n_batches + int(remainder > 0)
 
         keys = jax.random.split(key, n_total_chunks)
@@ -135,8 +137,8 @@ class SemiResolvedSspSynthesizer(SspSynthesizer):
 
         return wave, spec_total, mass_total
 
-    @partial(jax.jit, static_argnames=['self', 'Nstars'])
-    def _stochastic_IMF_sampling(self, imass, imf_params, Nstars, key):
+    @partial(jax.jit, static_argnames=['self', 'num_stars'])
+    def _stochastic_imf_sampling(self, imass, imf_params, num_stars, key):
         """
         Stochastically sample stellar masses from an IMF assuming
         it emerges from a probability distribution function.
@@ -155,6 +157,6 @@ class SemiResolvedSspSynthesizer(SspSynthesizer):
         cdf = cdf / cdf[-1]
 
         # Uniform sampling f the CDF
-        uniform_samples = jax.random.uniform(key, shape=(int(Nstars),))
+        uniform_samples = jax.random.uniform(key, shape=(int(num_stars),))
 
         return jnp.interp(uniform_samples, cdf, mass_grid)

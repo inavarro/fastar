@@ -37,11 +37,11 @@ def broken_powerlaw_raw(
     """
     mass = jnp.atleast_1d(mass)
 
-    def imf_piecewise(m):
+    def imf_piecewise(mass_value):
         return jnp.where(
-            m < m_break,
-            m ** (-alpha1),
-            (m_break ** (alpha2 - alpha1)) * m ** (-alpha2),
+            mass_value < m_break,
+            mass_value ** (-alpha1),
+            (m_break ** (alpha2 - alpha1)) * mass_value ** (-alpha2),
         )
 
     m_vals = jnp.linspace(m_min, m_max, 5000)

@@ -81,9 +81,9 @@ class SspSynthesizer(BaseSynthesizer):
         PCA regressor.
         """
         inputs = jnp.stack([logg, teff, fmet], axis=-1)
-        input_scaled = (inputs - self.scaler_X_mean) / self.scaler_X_scale
+        input_scaled = (inputs - self.scaler_x_mean) / self.scaler_x_scale
         pca_scaled = self.model.apply(self.params, input_scaled)
-        pca_coeffs = pca_scaled * self.scaler_Y_scale + self.scaler_Y_mean
+        pca_coeffs = pca_scaled * self.scaler_y_scale + self.scaler_y_mean
         spectra = (
             jnp.dot(pca_coeffs, self.pca_components) + self.pca_mean
         ) + self.mean_spectrum

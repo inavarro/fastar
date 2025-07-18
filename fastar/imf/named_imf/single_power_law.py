@@ -32,8 +32,8 @@ def single_powerlaw_raw(mass, m_min=0.1, m_max=100.0, alpha=2.35):
     """
     mass = jnp.atleast_1d(mass)
 
-    def imf_unnormalized(m):
-        return m ** (-alpha)
+    def imf_unnormalized(mass_value):
+        return mass_value ** (-alpha)
 
     m_vals = jnp.linspace(m_min, m_max, 5000)
     norm = jsp_integrate.trapezoid(imf_unnormalized(m_vals) * m_vals, x=m_vals)

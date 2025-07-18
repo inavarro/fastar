@@ -38,8 +38,10 @@ def flexi_imf_raw(
     """
     mass = jnp.atleast_1d(mass)
 
-    def imf_unnormalized(m):
-        return m ** (-alpha) * (1 - jnp.exp(-((m / m_peak) ** beta)))
+    def imf_unnormalized(mass_value):
+        return mass_value ** (-alpha) * (
+            1 - jnp.exp(-((mass_value / m_peak) ** beta))
+        )
 
     m_vals = jnp.linspace(m_min, m_max, 5000)
     norm = jsp_integrate.trapezoid(imf_unnormalized(m_vals) * m_vals, x=m_vals)

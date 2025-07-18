@@ -29,22 +29,26 @@ def kroupa_imf_raw(mass, m_min=0.1, m_max=100.0):
     """
     mass = jnp.atleast_1d(mass)
 
-    m1 = 0.08
-    m2 = 0.5
+    m_1 = 0.08
+    m_2 = 0.5
 
-    a1 = 0.3
-    a2 = 1.3
-    a3 = 2.3
+    a_1 = 0.3
+    a_2 = 1.3
+    a_3 = 2.3
 
-    A1 = 1.0
-    A2 = A1 * m1 ** (a2 - a1)
-    A3 = A2 * m2 ** (a3 - a2)
+    upper_a_1 = 1.0
+    upper_a_2 = upper_a_1 * m_1 ** (a_2 - a_1)
+    upper_a_3 = upper_a_2 * m_2 ** (a_3 - a_2)
 
-    def imf_unnormalized(m):
+    def imf_unnormalized(mass_value):
         return jnp.where(
-            m < m1,
-            A1 * m ** (-a1),
-            jnp.where(m < m2, A2 * m ** (-a2), A3 * m ** (-a3)),
+            mass_value < m_1,
+            upper_a_1 * mass_value ** (-a_1),
+            jnp.where(
+                mass_value < m_2,
+                upper_a_2 * mass_value ** (-a_2),
+                upper_a_3 * mass_value ** (-a_3),
+            ),
         )
 
     m_vals = jnp.linspace(m_min, m_max, 5000)

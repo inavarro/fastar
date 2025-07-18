@@ -40,28 +40,29 @@ class BaseSynthesizer:
         with open(
             get_asset_path(f'pca_regressor{self.rlabel}.flax'),
             'rb',
-        ) as f:
+        ) as pca_regressor_file:
             self.params = flax_ser.from_bytes(
-                model.init(jax.random.PRNGKey(0), jnp.ones((1, 3))), f.read()
+                model.init(jax.random.PRNGKey(0), jnp.ones((1, 3))),
+                pca_regressor_file.read(),
             )
         self.model = model
 
         with h5py.File(
             get_asset_path(f'training_artifacts{self.rlabel}.h5'), 'r'
-        ) as f:
-            self.scaler_X_mean = f['scaler_X/mean_'][:]
-            self.scaler_X_scale = f['scaler_X/scale_'][:]
-            self.scaler_Y_mean = f['scaler_Y/mean_'][:]
-            self.scaler_Y_scale = f['scaler_Y/scale_'][:]
-            self.pca_components = f['pca/components_'][:]
-            self.pca_mean = f['pca/mean_'][:]
-            self.mean_spectrum = f['mean_spectrum'][:]
-            self.wave = f['wave'][:]
+        ) as training_artifacts_file:
+            self.scaler_x_mean = training_artifacts_file['scaler_X/mean_'][:]
+            self.scaler_x_scale = training_artifacts_file['scaler_X/scale_'][:]
+            self.scaler_y_mean = training_artifacts_file['scaler_Y/mean_'][:]
+            self.scaler_y_scale = training_artifacts_file['scaler_Y/scale_'][:]
+            self.pca_components = training_artifacts_file['pca/components_'][:]
+            self.pca_mean = training_artifacts_file['pca/mean_'][:]
+            self.mean_spectrum = training_artifacts_file['mean_spectrum'][:]
+            self.wave = training_artifacts_file['wave'][:]
 
     @partial(jax.jit, static_argnames=['self'])
-    def _softplus(self, x, beta=100.0):
+    def _softplus(self, input_flux, beta=100.0):
         """
         Smooth activation function with soft floor to prevent
         any negative flux in the spectrum of extreme stars
         """
-        return (1.0 / beta) * jnp.logaddexp(0.0, beta * x)
+        return (1.0 / beta) * jnp.logaddexp(0.0, beta * input_flux)

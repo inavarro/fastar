@@ -263,9 +263,9 @@ class IntegratedSspSynthesizer(SspSynthesizer):
         ab_mag = self._compute_ab_magnitudes(
             spectrum[None, :], filter_response=response
         )[0]
-        L = 10 ** (-0.4 * (ab_mag - m_sun))
+        luminosity = 10 ** (-0.4 * (ab_mag - m_sun))
 
         return {
-            'ml_stars': stellar_mass / L,  # M*/L
-            'ml_total': 1.0 / L,  # M_total/L
+            'ml_stars': stellar_mass / luminosity,  # M*/L
+            'ml_total': 1.0 / luminosity,  # M_total/L
         }
