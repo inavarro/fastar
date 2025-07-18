@@ -221,16 +221,15 @@ class IntegratedSspSynthesizer(SspSynthesizer):
         solar_mag : float or None, optional
             AB magnitude of the Sun in the same filter. If None, computed from
             solar spectrum.
-
         Returns
         -------
         dict
             Dictionary containing:
-            - "ml_stars" : float
-                Stellar mass-to-light ratio (M*/L) in solar units.
-            - "ml_total" : float
-                Total mass-to-light ratio (M_total/L), assuming total mass = 1
-                solar mass.
+               - "ml_stars" : float
+                 Stellar mass-to-light ratio (M*/L) in solar units.
+               - "ml_total" : float
+                 Total mass-to-light ratio (M_total/L), assuming total mass = 1
+                 solar mass.
         """
 
         # ensure we always pass a dict to IMF **params

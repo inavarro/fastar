@@ -12,13 +12,19 @@ class PCARegressor(nn.Module):
     Simple feed-forward neural network for predicting PCA coefficients
     from stellar parameters.
 
-    Attributes
-    ----------
-    output_dim : int
-        Number of PCA components to output.
-    activation_type : str
-        Type of activation function ('relu', 'tanh', 'gelu').
+    Notes
+    -----
+    .. todo::
+      Fix the warning related with the Sphinx when the attributes are added to
+      the class PCARegressor.
     """
+
+    # Attributes
+    # ----------
+    # output_dim : int
+    #     Number of PCA components to output.
+    # activation_type : str
+    #     Type of activation function ('relu', 'tanh', 'gelu').
 
     output_dim: int = 16
     activation_type: str = 'gelu'

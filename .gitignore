@@ -36,5 +36,6 @@ Thumbs.db
 *.swp
 *~
 
-# Local installation
-*.egg-info/
+# Built documentation
+docs/_build/
+docs/api/

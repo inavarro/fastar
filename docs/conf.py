@@ -14,6 +14,8 @@
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
 
+from importlib.metadata import version as importlib_metadata_version
+
 
 # -- Project information -----------------------------------------------------
 
@@ -22,7 +24,12 @@ copyright = '2025, Ignacio Martin Navarro'
 author = 'Ignacio Martin Navarro'
 
 # The full version, including alpha/beta/rc tags
-release = '__project_release__'
+# release = '__project_release__'
+release = importlib_metadata_version('fastar')
+
+# The short X.Y version or the full version
+# version = '.'.join(release.split('.')[:2])
+version = release
 
 
 # -- General configuration ---------------------------------------------------
@@ -63,12 +70,16 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'alabaster'
+html_theme = 'sphinx_rtd_theme'
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
+
+# HTML logo and favicon
+html_logo = '_static/fastar_logo-wo_text.png'
+html_favicon = '_static/fastar_favicon.ico'
 
 
 # -- Extension configuration -------------------------------------------------
@@ -84,3 +95,8 @@ intersphinx_mapping = {
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = True
+
+# -- Options for napoleon extension ------------------------------------------
+
+napoleon_google_docstring = False
+napoleon_numpy_docstring = True

@@ -10,6 +10,15 @@ Welcome to FaStar's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   introduction
+   examples
+   figures
+
+.. toctree::
+   :maxdepth: 1
+
+   api/modules
+   todo_list
 
 
 Indices and tables
