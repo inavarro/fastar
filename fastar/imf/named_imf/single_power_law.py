@@ -1,14 +1,18 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+# pylint: disable=duplicate-code
+# *** Duplicate code will be addressed in future IMF refactoring ***
+
+"""
+Single Power Law (honoring Salpeter's visionary work
+https://ui.adsabs.harvard.edu/abs/1955ApJ...121..161S)
+"""
+
 import jax.numpy as jnp
 import jax.scipy.integrate as jsp_integrate
 
 
-# =============================================================================
-# 1. Single Power Law (honoring Salpeter's visionary work
-# https://ui.adsabs.harvard.edu/abs/1955ApJ...121..161S)
-# =============================================================================
 def single_powerlaw_raw(mass, m_min=0.1, m_max=100.0, alpha=2.35):
     """
     Returns the normalized Salpeter IMF evaluated at `mass` over the range
@@ -32,8 +36,8 @@ def single_powerlaw_raw(mass, m_min=0.1, m_max=100.0, alpha=2.35):
     """
     mass = jnp.atleast_1d(mass)
 
-    def imf_unnormalized(m):
-        return m ** (-alpha)
+    def imf_unnormalized(mass_value):
+        return mass_value ** (-alpha)
 
     m_vals = jnp.linspace(m_min, m_max, 5000)
     norm = jsp_integrate.trapezoid(imf_unnormalized(m_vals) * m_vals, x=m_vals)

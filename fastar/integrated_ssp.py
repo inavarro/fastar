@@ -15,7 +15,6 @@ from jax.scipy.integrate import trapezoid
 
 from fastar.core.ssp import SspSynthesizer
 from fastar.interpolate.color import color_interpolation
-from fastar.interpolate.isochrone import isochrone_interpolation
 
 
 class IntegratedSspSynthesizer(SspSynthesizer):
@@ -163,8 +162,11 @@ class IntegratedSspSynthesizer(SspSynthesizer):
 
         return self.wave, ssp_std
 
+    # *** Review the following method: it should be a function, not? ***
     @partial(jax.jit, static_argnames=['self'])
-    def _population_synthesis_integrate(self, spectra, corr, imf_val, imass):
+    def _population_synthesis_integrate(  # pylint: disable=no-self-use
+        self, spectra, corr, imf_val, imass
+    ):
         """
         Integrate IMF-weighted, corrected spectra over initial mass grid.
         """
@@ -186,16 +188,7 @@ class IntegratedSspSynthesizer(SspSynthesizer):
         imf_params = imf_params or {}
 
         # Interpolate isochrone at given age and metallicity
-        imass, _, _, _ = isochrone_interpolation(
-            age,
-            met,
-            self.ages,
-            self.mets,
-            self.mass_ini_data,
-            self.teff_out_data,
-            self.logg_out_data,
-            self.lumi_out_data,
-        )
+        imass, _, _, _ = self._get_isochrone(age, met)
 
         # Evaluate IMF (can be overridden per call)
         imf_val = self.imf_function(imass, imf_params)
@@ -233,16 +226,15 @@ class IntegratedSspSynthesizer(SspSynthesizer):
         solar_mag : float or None, optional
             AB magnitude of the Sun in the same filter. If None, computed from
             solar spectrum.
-
         Returns
         -------
         dict
             Dictionary containing:
-            - "ml_stars" : float
-                Stellar mass-to-light ratio (M*/L) in solar units.
-            - "ml_total" : float
-                Total mass-to-light ratio (M_total/L), assuming total mass = 1
-                solar mass.
+               - "ml_stars" : float
+                 Stellar mass-to-light ratio (M*/L) in solar units.
+               - "ml_total" : float
+                 Total mass-to-light ratio (M_total/L), assuming total mass = 1
+                 solar mass.
         """
 
         # ensure we always pass a dict to IMF **params
@@ -268,11 +260,11 @@ class IntegratedSspSynthesizer(SspSynthesizer):
         ab_mag = self._compute_ab_magnitudes(
             spectrum[None, :], filter_response=response
         )[0]
-        L = 10 ** (-0.4 * (ab_mag - m_sun))
+        luminosity = 10 ** (-0.4 * (ab_mag - m_sun))
 
         return {
-            'ml_stars': stellar_mass / L,  # M*/L
-            'ml_total': 1.0 / L,  # M_total/L
+            'ml_stars': stellar_mass / luminosity,  # M*/L
+            'ml_total': 1.0 / luminosity,  # M_total/L
         }
 
     def load_precomputed_models(

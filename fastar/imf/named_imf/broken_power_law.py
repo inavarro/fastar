@@ -1,13 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+# pylint: disable=duplicate-code
+# *** Duplicate code will be addressed in future IMF refactoring ***
+
+"""
+Broken power-law
+"""
+
 import jax.numpy as jnp
 import jax.scipy.integrate as jsp_integrate
 
 
-# =============================================================================
-# 2. Broken power-law
-# =============================================================================
 def broken_powerlaw_raw(
     mass, m_min=0.1, m_max=100.0, m_break=0.5, alpha1=1.3, alpha2=2.3
 ):
@@ -37,11 +41,11 @@ def broken_powerlaw_raw(
     """
     mass = jnp.atleast_1d(mass)
 
-    def imf_piecewise(m):
+    def imf_piecewise(mass_value):
         return jnp.where(
-            m < m_break,
-            m ** (-alpha1),
-            (m_break ** (alpha2 - alpha1)) * m ** (-alpha2),
+            mass_value < m_break,
+            mass_value ** (-alpha1),
+            (m_break ** (alpha2 - alpha1)) * mass_value ** (-alpha2),
         )
 
     m_vals = jnp.linspace(m_min, m_max, 5000)
