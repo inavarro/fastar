@@ -7,16 +7,17 @@ import numpy as np
 from astropy.io.ascii import read as ascii_read
 from astroquery.svo_fps import SvoFps
 
-from fastar.fastar_imf import single_powerlaw as unimodal
-from fastar.fastar_ssp_class import PopulationSynthesizer
-from fastar.fastar_utils import compute_ab_magnitudes, compute_linetrength
+from fastar.imf.named_imf.single_power_law import single_powerlaw as unimodal
+from fastar.integrated_ssp import IntegratedSspSynthesizer
+from fastar.tools.utils import compute_ab_magnitudes
+from fastar.tools.utils import compute_linetrength
 
 
 # ---------------------------------------------------
 # Spectroscopic predictions
 # ---------------------------------------------------
 # Load the synthesis code
-ssp_spec = PopulationSynthesizer(imf_function=unimodal)
+ssp_spec = IntegratedSspSynthesizer(imf_function=unimodal)
 
 # Let's focus now on a single SSP
 age = 0.1
@@ -86,7 +87,7 @@ print(
 # **SHOULD NOT BE USED FOR SPECTROSCOPIC MEASUREMENTS**
 # ---------------------------------------------------
 # Load the synthesis code
-ssp_phot = PopulationSynthesizer(model_label='phot', imf_function=unimodal)
+ssp_phot = IntegratedSspSynthesizer(model_label='phot', imf_function=unimodal)
 
 # Let's focus now on a single SSP
 age = 0.1

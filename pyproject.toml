@@ -7,8 +7,19 @@ authors = [
 ]
 urls = { "homepage" = "https://github.com/inavarro/fastar" }
 readme = "README.md"
-license = { text = "MIT" }
+license = "MIT"
+license-files = ["LICENSE"]
 requires-python = ">=3.10.12"
+classifiers = [
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Astronomy",
+    "Topic :: Scientific/Engineering :: Physics",
+]
+keywords = [
+    "astronomy",
+    "astrophysics",
+    "science",
+]
 dependencies = [
   "astropy>=6.1.7",
   "astroquery>=0.4.8",
@@ -34,12 +45,19 @@ docs = [
   "sphinx-rtd-theme>=1.3.0"
 ]
 
+[project.scripts]
+fastar-plot-filter-responses = "fastar.viz.filter_responses:main"
+fastar-plot-imf-shapes = "fastar.viz.imf_shapes:main"
+
 [build-system]
 requires = ["setuptools>=65.5.1", "wheel>=0.41.1", "setuptools_scm>=8.3.1"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
 packages = ["fastar"]
+
+[tool.setuptools.package-data]
+"fastar" = ["assets/**"]
 
 [tool.setuptools_scm]
 version_file = "fastar/_version.py"

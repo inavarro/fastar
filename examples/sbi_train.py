@@ -10,9 +10,9 @@ import numpy as np
 from astroquery.svo_fps import SvoFps
 # from tqdm import tqdm
 
-from fastar.fastar_imf import single_powerlaw as unimodal
-from fastar.fastar_semi_class import SemiResolvedSynthesizer
-# from fastar.fastar_utils import compute_ab_magnitudes
+from fastar.imf.named_imf.single_power_law import single_powerlaw as unimodal
+from fastar.semi_resolved_ssp import SemiResolvedSspSynthesizer
+# from fastar.tools.utils import compute_ab_magnitudes
 
 
 # --------------------------
@@ -28,7 +28,9 @@ rng = np.random.default_rng(seed=42)
 # --------------------------
 # Instantiate synthesizer
 # --------------------------
-semi_synth = SemiResolvedSynthesizer(imf_function=unimodal, model_label='phot')
+semi_synth = SemiResolvedSspSynthesizer(
+    imf_function=unimodal, model_label='phot'
+)
 wave, spec, Mstars = semi_synth.synthesize_large(
     age=10,
     met=0,

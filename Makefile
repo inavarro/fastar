@@ -32,6 +32,7 @@ clean:
 	rm -rf fastar.egg-info/
 	rm -rf fastar/__pycache__/
 	rm -rf fastar/*/__pycache__/
+	rm -rf fastar/*/*/__pycache__/
 	rm -rf build/
 	rm -rf dist/
 

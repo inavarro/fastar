@@ -7,16 +7,18 @@ import jax.random as jr
 import numpy as np
 from astroquery.svo_fps import SvoFps
 
-from fastar.fastar_imf import single_powerlaw as unimodal
-from fastar.fastar_semi_class import SemiResolvedSynthesizer
-from fastar.fastar_utils import compute_ab_magnitudes
+from fastar.imf.named_imf.single_power_law import single_powerlaw as unimodal
+from fastar.semi_resolved_ssp import SemiResolvedSspSynthesizer
+from fastar.tools.utils import compute_ab_magnitudes
 
 
 # ---------------------------------------------------
 # Spectroscopic predictions
 # ---------------------------------------------------
 # Load the synthesis code
-semi_spec = SemiResolvedSynthesizer(imf_function=unimodal, model_label='phot')
+semi_spec = SemiResolvedSspSynthesizer(
+    imf_function=unimodal, model_label='phot'
+)
 
 # Let's focus now on a single SSP
 age = 10
