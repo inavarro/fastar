@@ -27,7 +27,7 @@ whl:
 uninstall:
 	pip uninstall -y fastar
 
-clean:
+clean: clean-docs
 	rm -rf build/
 	rm -rf fastar.egg-info/
 	rm -rf fastar/__pycache__/
@@ -54,7 +54,7 @@ apidoc: clean-apidoc
 clean-apidoc:
 	rm -rf docs/api/
 
-docs: docs-dummy docs-html
+docs: clean-docs docs-dummy docs-html
 		
 
 docs-dummy: apidoc
