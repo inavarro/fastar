@@ -23,8 +23,10 @@ class PCARegressor(nn.Module):
     output_dim: int = 16
     activation_type: str = 'gelu'
 
+    # *** Review the following method, although it could be probably OK ***
+    # W0221: Variadics removed in overridden 'PCARegressor.__call__' method
     @nn.compact
-    def __call__(self, x):
+    def __call__(self, x):  # pylint: disable=arguments-differ
         act = {'relu': nn.relu, 'tanh': nn.tanh, 'gelu': nn.gelu}[
             self.activation_type
         ]
