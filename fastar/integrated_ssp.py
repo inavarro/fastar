@@ -281,7 +281,7 @@ class IntegratedSspSynthesizer(SspSynthesizer):
         met_range=None,
         imf_range=None,
         cache_dir="ssp_cache",
-        model_label=''
+        user_label=''
     ):
         """
         Compute or load a grid of SSP spectra, storing each grid in a
@@ -323,7 +323,7 @@ class IntegratedSspSynthesizer(SspSynthesizer):
         age_str = _format_range(age_range)
         met_str = _format_range(met_range)
         imf_str = _format_imf_range(imf_range)
-        fname = f"sspgrid_age{age_str}_met{met_str}_imf{imf_str}"+model_label+".hdf5"
+        fname = f"sspgrid_age{age_str}_met{met_str}_imf{imf_str}"+self.rlabel+user_label+".hdf5"
         cache_path = os.path.join(cache_dir, fname)
 
         # Load if exists
