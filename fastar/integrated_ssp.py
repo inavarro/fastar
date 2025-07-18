@@ -2,7 +2,11 @@
 # -*- coding: utf-8 -*-
 
 import random
+import os
+import h5py
 from functools import partial
+
+import numpy as np
 
 import jax
 import jax.numpy as jnp
@@ -198,6 +202,7 @@ class IntegratedSspSynthesizer(SspSynthesizer):
 
         return trapezoid(imf_val * imass, x=imass)
 
+    @partial(jax.jit, static_argnames=['self'])
     def mass_to_light_ratio(
         self, age, met, imf_params=None, filter_response=None, solar_mag=None
     ):
@@ -269,3 +274,81 @@ class IntegratedSspSynthesizer(SspSynthesizer):
             'ml_stars': stellar_mass / L,  # M*/L
             'ml_total': 1.0 / L,  # M_total/L
         }
+
+    def load_precomputed_models(
+        self,
+        age_range=None,
+        met_range=None,
+        imf_range=None,
+        cache_dir="ssp_cache",
+        model_label=''
+    ):
+        """
+        Compute or load a grid of SSP spectra, storing each grid in a
+        descriptive HDF5 file based on parameter values.
+        """
+
+        age_range = jnp.array(age_range if age_range is not None else self.iso_ages)
+        met_range = jnp.array(met_range if met_range is not None else self.iso_mets)
+        imf_range = imf_range if imf_range is not None else [{}]
+
+        # Validate ranges
+        if (jnp.min(age_range) < jnp.min(self.ages/1000.)) or (jnp.max(age_range) > jnp.max(self.ages/1000.)):
+            raise ValueError("Age range outside isochrone limits.")
+        if (jnp.min(met_range) < jnp.min(self.mets)) or (jnp.max(met_range) > jnp.max(self.mets)):
+            raise ValueError("Metallicity range outside isochrone limits.")
+
+        # Format helpers for the output file name
+        def _format_range(arr):
+            """Return formatted string like '0.1-13.0' from an array."""
+            return f"{np.min(arr):.2f}-{np.max(arr):.2f}"
+
+
+        def _format_imf_range(imf_range):
+            """Create a descriptive string for the IMF range."""
+            if len(imf_range) == 1 and imf_range[0] == {}:
+                # Use the name of the function as a fallback label
+                imf_func_name = getattr(self.imf_function, "__name__", "imf")
+                return imf_func_name.lower()
+            # Otherwise, build a param-based label
+            keys = sorted(imf_range[0].keys())
+            key_strs = []
+            for key in keys:
+                vals = [params.get(key, None) for params in imf_range]
+                key_str = f"{key}{min(vals):.1f}-{max(vals):.1f}"
+                key_strs.append(key_str)
+            return "_".join(key_strs)
+    
+        # Create filename from parameter ranges
+        age_str = _format_range(age_range)
+        met_str = _format_range(met_range)
+        imf_str = _format_imf_range(imf_range)
+        fname = f"sspgrid_age{age_str}_met{met_str}_imf{imf_str}"+model_label+".hdf5"
+        cache_path = os.path.join(cache_dir, fname)
+
+        # Load if exists
+        if os.path.exists(cache_path):
+            print(f"Loading SSP grid from {cache_path}")
+            with h5py.File(cache_path, "r") as f:
+                wave = f["wavelength"][()]
+                spec_grid = f["spectra"][()]
+            return wave, spec_grid
+
+        print(f"Calculating SSP predictions")
+        # Compute SSP grid
+        os.makedirs(cache_dir, exist_ok=True)
+        na, nm, ni, nw = len(age_range), len(met_range), len(imf_range), len(self.wave)
+        spec_grid = jnp.zeros((na, nm, ni, nw))
+
+        for ia, age in enumerate(age_range):
+            for im, met in enumerate(met_range):
+                for ii, imf_params in enumerate(imf_range):
+                    _, spec = self.synthesize(age, met, imf_params)
+                    spec_grid = spec_grid.at[ia, im, ii, :].set(spec)
+
+        # Save
+        with h5py.File(cache_path, "w") as f:
+            f.create_dataset("wavelength", data=np.array(self.wave))
+            f.create_dataset("spectra", data=np.array(spec_grid))
+
+        return self.wave, spec_grid
