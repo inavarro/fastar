@@ -159,8 +159,11 @@ class IntegratedSspSynthesizer(SspSynthesizer):
 
         return self.wave, ssp_std
 
+    # *** Review the following method: it should be a function, not? ***
     @partial(jax.jit, static_argnames=['self'])
-    def _population_synthesis_integrate(self, spectra, corr, imf_val, imass):
+    def _population_synthesis_integrate(  # pylint: disable=no-self-use
+        self, spectra, corr, imf_val, imass
+    ):
         """
         Integrate IMF-weighted, corrected spectra over initial mass grid.
         """

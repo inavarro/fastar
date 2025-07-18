@@ -59,8 +59,9 @@ class BaseSynthesizer:
             self.mean_spectrum = training_artifacts_file['mean_spectrum'][:]
             self.wave = training_artifacts_file['wave'][:]
 
+    # *** Review the following method: it should be a function, not? ***
     @partial(jax.jit, static_argnames=['self'])
-    def _softplus(self, input_flux, beta=100.0):
+    def _softplus(self, input_flux, beta=100.0):  # pylint: disable=no-self-use
         """
         Smooth activation function with soft floor to prevent
         any negative flux in the spectrum of extreme stars
