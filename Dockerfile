@@ -23,7 +23,7 @@ RUN pip install --no-cache-dir \
     ruff==0.12.3 \
     setuptools==65.5.1 \
     setuptools_scm==8.3.1 \
-    Sphinx==4.3.2 \
+    Sphinx==5.3.0 \
     sphinx-rtd-theme==1.3.0 \
     tqdm==4.67.1 \
     wheel==0.41.1

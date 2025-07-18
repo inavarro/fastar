@@ -1,13 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+# pylint: disable=duplicate-code
+# *** Duplicate code will be addressed in future IMF refactoring ***
+
+"""
+Chabrier 2003 IMF (https://arxiv.org/abs/astro-ph/0304382)
+"""
+
 import jax.numpy as jnp
 import jax.scipy.integrate as jsp_integrate
 
 
-# =============================================================================
-# 4. Chabrier 2003 IMF (https://arxiv.org/abs/astro-ph/0304382)
-# =============================================================================
 def chabrier_imf_raw(mass, m_min=0.1, m_max=100.0):
     """
     Returns the normalized Chabrier IMF evaluated at `mass`,
@@ -29,13 +33,17 @@ def chabrier_imf_raw(mass, m_min=0.1, m_max=100.0):
     """
     mass = jnp.atleast_1d(mass)
 
-    def log_normal(m):
-        return m ** (-1) * jnp.exp(
-            -((jnp.log10(m) - jnp.log10(0.08)) ** 2) / 0.9522
+    def log_normal(mass_value):
+        return mass_value ** (-1) * jnp.exp(
+            -((jnp.log10(mass_value) - jnp.log10(0.08)) ** 2) / 0.9522
         )
 
-    def imf_unnormalized(m):
-        return jnp.where(m <= 1, log_normal(m), log_normal(1) * m ** (-2.3))
+    def imf_unnormalized(mass_value):
+        return jnp.where(
+            mass_value <= 1,
+            log_normal(mass_value),
+            log_normal(1) * mass_value ** (-2.3),
+        )
 
     m_vals = jnp.linspace(m_min, m_max, 5000)
     norm = jsp_integrate.trapezoid(imf_unnormalized(m_vals) * m_vals, x=m_vals)
