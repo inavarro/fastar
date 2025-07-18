@@ -40,9 +40,11 @@ def main():
         '/home/imartin/Basti/UN/EMILES_BASTI_BASE_UN/'
         + 'Eun1.30Zp0.06T12.0000_iTp0.00_baseFe.fits'  # noqa: W503
     )
-    hdu = fits.open(filename)
+    hdu_list = fits.open(filename)
 
-    mspec = hdu[0].data
+    # *** Review the following line of code ***
+    # E1101: Instance of 'HDUList' has no 'data' member; maybe '_data'?
+    mspec = hdu_list[0].data  # pylint: disable=no-member
     mwave = 1680 + np.arange(53689) * 0.9
 
     # Load HiPERCAM filters
