@@ -7,7 +7,7 @@ from astroquery.svo_fps import SvoFps
 from matplotlib import pyplot as plt
 
 from fastar.imf.named_imf.single_power_law import single_powerlaw as unimodal
-from fastar.ssp import PopulationSynthesizer
+from fastar.integrated_ssp import IntegratedSspSynthesizer
 
 
 def main():
@@ -15,7 +15,7 @@ def main():
     # Spectroscopic predictions
     # ---------------------------------------------------
     # Load the synthesis code
-    ssp_spec = PopulationSynthesizer(imf_function=unimodal)
+    ssp_spec = IntegratedSspSynthesizer(imf_function=unimodal)
 
     # Let's focus now on a single SSP
     age = 12
@@ -29,7 +29,9 @@ def main():
     # # **SHOULD NOT BE USED FOR SPECTROSCOPIC MEASUREMENTS**
     # # ---------------------------------------------------
     # # Load the synthesis code
-    ssp_phot = PopulationSynthesizer(model_label='phot', imf_function=unimodal)
+    ssp_phot = IntegratedSspSynthesizer(
+        model_label='phot', imf_function=unimodal
+    )
 
     phot_wave, phot_spec = ssp_phot.synthesize(age=age, met=met)
 
