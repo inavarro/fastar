@@ -69,7 +69,7 @@ class StellarSynthesizer:
         return (1.0 / beta) * jnp.logaddexp(0.0, beta * input_flux)
 
     @partial(jax.jit, static_argnames=['self'])
-    def _predict_spectrum(self, logg, teff, fmet):
+    def predict_spectrum(self, logg, teff, fmet):
         """
         Predict stellar spectra given logg, Teff, and [Fe/H] using the
         PCA regressor.

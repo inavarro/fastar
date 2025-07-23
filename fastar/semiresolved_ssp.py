@@ -62,7 +62,7 @@ class SemiresolvedSynthesizer(PopulationIngredients):
         ilum_interp = jnp.interp(sampled_masses, imass, ilum)
 
         # Calculate the stellar spectra
-        spectra = self._predict_spectrum(
+        spectra = self.predict_spectrum(
             ilogg_interp, iteff_interp, jnp.full_like(iteff_interp, met)
         )
 

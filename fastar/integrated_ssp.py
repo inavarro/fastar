@@ -52,7 +52,7 @@ class IntegratedSynthesizer(PopulationIngredients):
         imet = jnp.full_like(iteff, met)
 
         # Calculate the stellar spectra
-        spectra = self._predict_spectrum(ilogg, iteff, imet)
+        spectra = self.predict_spectrum(ilogg, iteff, imet)
 
         # Evaluate IMF value at the isochrone stellar masses
         imf_val = self.imf_function(imass, imf_params)
@@ -127,7 +127,7 @@ class IntegratedSynthesizer(PopulationIngredients):
             imet_perturbed = imet + jr.normal(subkey3, shape=imet.shape) * dmet
 
             # Predict spectra for the isochrone points
-            spectra = self._predict_spectrum(
+            spectra = self.predict_spectrum(
                 ilogg_perturbed, iteff_perturbed, imet_perturbed
             )
 
@@ -275,8 +275,39 @@ class IntegratedSynthesizer(PopulationIngredients):
         user_label=''
     ):
         """
-        Compute or load a grid of SSP spectra, storing each grid in a
-        descriptive HDF5 file based on parameter values.
+        Compute or load a grid of precomputed SSP spectra and save them to disk.
+
+        This function evaluates the SSP model on a grid of age, metallicity, and IMF
+        parameters. If a cached file with matching parameters exists, it loads the data
+        from disk. Otherwise, it computes the SSP grid, saves it to an HDF5 file, and 
+        returns the resulting data arrays.
+
+        Parameters
+        ----------
+        age_range : array-like or None, optional
+            Array of SSP ages in Gyr. If None, uses the default isochrone age grid.
+        met_range : array-like or None, optional
+            Array of SSP metallicities [M/H]. If None, uses the default isochrone metallicity grid.
+        imf_range : list of dicts or None, optional
+            List of parameter dictionaries for the IMF function. Each dictionary defines one IMF configuration.
+            If None, defaults to a single empty dictionary (default IMF).
+        cache_dir : str, optional
+            Directory where the SSP grids are stored or will be saved. Default is "ssp_cache".
+        user_label : str, optional
+            Optional string appended to the output filename for custom identification.
+
+        Returns
+        -------
+        wave : ndarray
+            Wavelength grid of the synthesized SSP spectra.
+        spec_grid : ndarray
+            SSP spectra on the specified grid, with shape (n_ages, n_mets, n_imfs, n_wave).
+        age_range : ndarray
+            Array of ages used in the grid.
+        met_range : ndarray
+            Array of metallicities used in the grid.
+        imf_range : list of dict
+            List of IMF parameter dictionaries used in the grid.
         """
 
         age_range = jnp.array(age_range if age_range is not None else self.iso_ages)
@@ -341,5 +372,8 @@ class IntegratedSynthesizer(PopulationIngredients):
         with h5py.File(cache_path, "w") as f:
             f.create_dataset("wavelength", data=np.array(self.wave))
             f.create_dataset("spectra", data=np.array(spec_grid))
+            f.create_dataset("age_range", data=np.array(age_range))
+            f.create_dataset("met_range", data=np.array(met_range))
+            f.create_dataset("imf_range", data=imf_range)
 
-        return self.wave, spec_grid
+        return self.wave, spec_grid, age_range, met_range, imf_range
