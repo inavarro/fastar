@@ -7,14 +7,14 @@ import h5py
 import flax.serialization as flax_ser
 import jax
 import jax.numpy as jnp
-from fastar.nn.pca_regressor import PCARegressor
 
+from fastar.nn.pca_regressor import PCARegressor
 from fastar.tools.assets import get_asset_path
 
 
-class BaseSynthesizer:
+class StellarSynthesizer:
     """
-    Base class for synthesizers.
+    Base class. Synthesizer of stellar spectra.
     """
 
     def __init__(self, model_label=None):

@@ -7,11 +7,11 @@ import jax
 import jax.numpy as jnp
 from jax.scipy.integrate import trapezoid
 
-from fastar.core.ssp import SspSynthesizer
+from fastar.core.ingredients import PopulationIngredients
 from fastar.interpolate.color import color_interpolation
 
 
-class SemiResolvedSspSynthesizer(SspSynthesizer):
+class SemiresolvedSynthesizer(PopulationIngredients):
     """
     Class for generating synthetic semi-resolved stellar populations
     spectroscopic and photometric predictions with a PCA-based stellar spectral
@@ -101,12 +101,36 @@ class SemiResolvedSspSynthesizer(SspSynthesizer):
         return result
 
     def synthesize_large(
-        self, age, met, imf_params, num_stars, key, batch_size=10000
+        self, age, met, imf_params, num_stars, key, batch_size=10000,
+        out_masses=False
     ):
         """
-        Generate synthetic population spectrum using chunked IMF sampling
-        for large numbers of stars. This allows calculating predictions
-        for a large number of stars without using too much memory
+        Generate synthetic semi-resolved population spectrum for a given
+        age and metallicity for a large number of stars.
+
+        Parameters
+        ----------
+        age : float
+            Stellar population age (in Gyr).
+        met : float
+            Metallicity [M/H].
+        imf_params : dict
+            Parameters for the initial mass function.
+        num_stars : int
+            Number of stars to sample.
+        key : PRNGKey
+            Random key for JAX sampling.
+        batch_size : int
+            Size of the stellar mass batches. Default is 1e4
+        out_masses : bool, optional
+            If True, return array of sampled stellar masses instead of the
+            total mass. Default is False.
+
+        Returns
+        -------
+        tuple
+            (wavelengths, spectrum, total stellar mass) or (wavelengths,
+            spectrum, sampled stellar masses) depending on `out_masses`.
         """
         n_batches = int(num_stars) // int(batch_size)
         remainder = int(num_stars) % int(batch_size)
@@ -116,25 +140,34 @@ class SemiResolvedSspSynthesizer(SspSynthesizer):
 
         # First batch
         wave, spec_total, mass_total = self.synthesize(
-            age, met, imf_params, batch_size, keys[0]
+            age, met, imf_params, batch_size, keys[0],
+            out_masses=out_masses
         )
 
         # Loop over full-size batches
         for i in range(1, n_batches):
             _, spec_chunk, mass_chunk = self.synthesize(
-                age, met, imf_params, batch_size, keys[i]
+                age, met, imf_params, batch_size, keys[i],
+                out_masses=out_masses
             )
             spec_total += spec_chunk
-            mass_total += mass_chunk
+            if out_masses:
+                mass_total = jnp.append(mass_total,mass_chunk)
+            else:
+                mass_total += mass_chunk
 
         # Final chunk (remainder)
         if remainder > 0:
             _, spec_chunk, mass_chunk = self.synthesize(
-                age, met, imf_params, remainder, keys[-1]
+                age, met, imf_params, remainder, keys[-1],
+                out_masses=out_masses
             )
             spec_total += spec_chunk
-            mass_total += mass_chunk
-
+            if out_masses:
+                mass_total = jnp.append(mass_total,mass_chunk)
+            else:
+                mass_total += mass_chunk
+        
         return wave, spec_total, mass_total
 
     @partial(jax.jit, static_argnames=['self', 'num_stars'])

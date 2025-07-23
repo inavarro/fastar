@@ -13,11 +13,11 @@ import jax.numpy as jnp
 import jax.random as jr
 from jax.scipy.integrate import trapezoid
 
-from fastar.core.ssp import SspSynthesizer
+from fastar.core.ingredients import PopulationIngredients
 from fastar.interpolate.color import color_interpolation
 
 
-class IntegratedSspSynthesizer(SspSynthesizer):
+class IntegratedSynthesizer(PopulationIngredients):
     """
     Class for generating synthetic integrated SSP spectroscopic and photometric
     predictions with a PCA-based stellar spectral model.
@@ -162,10 +162,9 @@ class IntegratedSspSynthesizer(SspSynthesizer):
 
         return self.wave, ssp_std
 
-    # *** Review the following method: it should be a function, not? ***
-    @partial(jax.jit, static_argnames=['self'])
+    @partial(jax.jit)
     def _population_synthesis_integrate(  # pylint: disable=no-self-use
-        self, spectra, corr, imf_val, imass
+        spectra, corr, imf_val, imass
     ):
         """
         Integrate IMF-weighted, corrected spectra over initial mass grid.
