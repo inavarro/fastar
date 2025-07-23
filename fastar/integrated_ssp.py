@@ -162,9 +162,9 @@ class IntegratedSynthesizer(PopulationIngredients):
 
         return self.wave, ssp_std
 
-    @partial(jax.jit)
-    def _population_synthesis_integrate(  # pylint: disable=no-self-use
-        spectra, corr, imf_val, imass
+    @partial(jax.jit, static_argnames=['self'])
+    def _population_synthesis_integrate(
+        self, spectra, corr, imf_val, imass
     ):
         """
         Integrate IMF-weighted, corrected spectra over initial mass grid.

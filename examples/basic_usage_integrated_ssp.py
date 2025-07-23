@@ -31,8 +31,8 @@ def main():
     # Standard SSP call
     wave, spec = ssp_spec.synthesize(age=age, met=met)
 
-    ages = ssp_spec.iso_ages()
-    mets = ssp_spec.iso_mets()
+    ages = ssp_spec.iso_ages
+    mets = ssp_spec.iso_mets
 
     # Get the remaining stellar mass of the SSP (if 1 Msun formed), aka, the
     # fraction of mass in stars compared to the initial stellar mass of the
@@ -67,7 +67,7 @@ def main():
     gr_color = gmag - rmag
 
     # Line-strengths
-    index_tab = ascii_read('../../aux/indices.def')
+    index_tab = ascii_read('../fastar/assets/indices.def')
     hbeta = compute_linetrength(wave, spec, 'Hbeta_o', index_tab)
 
     # Finally, let's get uncertainties for the SSP prediction
