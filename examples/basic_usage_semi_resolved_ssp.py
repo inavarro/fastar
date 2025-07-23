@@ -11,7 +11,7 @@ import numpy as np
 from astroquery.svo_fps import SvoFps
 
 from fastar.imf.named_imf.single_power_law import single_powerlaw as unimodal
-from fastar.semi_resolved_ssp import SemiResolvedSspSynthesizer
+from fastar.semiresolved_ssp import SemiresolvedSynthesizer
 from fastar.tools.utils import compute_ab_magnitudes
 
 
@@ -20,7 +20,7 @@ def main():
     # Spectroscopic predictions
     # ---------------------------------------------------
     # Load the synthesis code
-    semi_spec = SemiResolvedSspSynthesizer(
+    semi_spec = SemiresolvedSynthesizer(
         imf_function=unimodal, model_label='phot'
     )
 
