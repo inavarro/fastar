@@ -372,8 +372,5 @@ class IntegratedSynthesizer(PopulationIngredients):
         with h5py.File(cache_path, "w") as f:
             f.create_dataset("wavelength", data=np.array(self.wave))
             f.create_dataset("spectra", data=np.array(spec_grid))
-            f.create_dataset("age_range", data=np.array(age_range))
-            f.create_dataset("met_range", data=np.array(met_range))
-            f.create_dataset("imf_range", data=imf_range)
 
-        return self.wave, spec_grid, age_range, met_range, imf_range
+        return self.wave, spec_grid
