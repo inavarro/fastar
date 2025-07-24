@@ -18,9 +18,9 @@ class SemiresolvedSynthesizer(PopulationIngredients):
     model and a stochastic IMF sampling.
     """
 
-    @partial(jax.jit, static_argnames=['self', 'num_stars'])
+    @partial(jax.jit, static_argnames=['self', 'num_stars', 'out_masses'])
     def synthesize(
-        self, age, met, imf_params, num_stars, key, out_masses=False
+        self, age, met, num_stars, key, imf_params=None, out_masses=False
     ):
         """
         Generate synthetic semi-resolved population spectrum for a given
@@ -32,12 +32,12 @@ class SemiresolvedSynthesizer(PopulationIngredients):
             Stellar population age (in Gyr).
         met : float
             Metallicity [M/H].
-        imf_params : dict
-            Parameters for the initial mass function.
         num_stars : int
             Number of stars to sample.
         key : PRNGKey
             Random key for JAX sampling.
+        imf_params : dict, optional
+            Parameters for the initial mass function.
         out_masses : bool, optional
             If True, return array of sampled stellar masses instead of the
             total mass. Default is False.
@@ -48,6 +48,9 @@ class SemiresolvedSynthesizer(PopulationIngredients):
             (wavelengths, spectrum, total stellar mass) or (wavelengths,
             spectrum, sampled stellar masses) depending on `out_masses`.
         """
+        # ensure we always pass a dict to IMF **params
+        imf_params = imf_params or {}
+
         # Interpolate the isochrones at the desired age and metallicity
         imass, iteff, ilogg, ilum = self._get_isochrone(age, met)
 
@@ -101,8 +104,8 @@ class SemiresolvedSynthesizer(PopulationIngredients):
         return result
 
     def synthesize_large(
-        self, age, met, imf_params, num_stars, key, batch_size=10000,
-        out_masses=False
+        self, age, met, num_stars, key, batch_size=10000,
+        out_masses=False, imf_params=None
     ):
         """
         Generate synthetic semi-resolved population spectrum for a given
@@ -114,14 +117,14 @@ class SemiresolvedSynthesizer(PopulationIngredients):
             Stellar population age (in Gyr).
         met : float
             Metallicity [M/H].
-        imf_params : dict
-            Parameters for the initial mass function.
         num_stars : int
             Number of stars to sample.
         key : PRNGKey
             Random key for JAX sampling.
         batch_size : int
             Size of the stellar mass batches. Default is 1e4
+        imf_params : dict, optional
+            Parameters for the initial mass function.
         out_masses : bool, optional
             If True, return array of sampled stellar masses instead of the
             total mass. Default is False.
@@ -132,6 +135,9 @@ class SemiresolvedSynthesizer(PopulationIngredients):
             (wavelengths, spectrum, total stellar mass) or (wavelengths,
             spectrum, sampled stellar masses) depending on `out_masses`.
         """
+        # ensure we always pass a dict to IMF **params
+        imf_params = imf_params or {}
+
         n_batches = int(num_stars) // int(batch_size)
         remainder = int(num_stars) % int(batch_size)
         n_total_chunks = n_batches + int(remainder > 0)
@@ -140,15 +146,15 @@ class SemiresolvedSynthesizer(PopulationIngredients):
 
         # First batch
         wave, spec_total, mass_total = self.synthesize(
-            age, met, imf_params, batch_size, keys[0],
-            out_masses=out_masses
+            age, met, batch_size, keys[0],
+            out_masses=out_masses, imf_params=imf_params
         )
 
         # Loop over full-size batches
         for i in range(1, n_batches):
             _, spec_chunk, mass_chunk = self.synthesize(
-                age, met, imf_params, batch_size, keys[i],
-                out_masses=out_masses
+                age, met, batch_size, keys[i],
+                out_masses=out_masses, imf_params=imf_params
             )
             spec_total += spec_chunk
             if out_masses:
@@ -159,8 +165,8 @@ class SemiresolvedSynthesizer(PopulationIngredients):
         # Final chunk (remainder)
         if remainder > 0:
             _, spec_chunk, mass_chunk = self.synthesize(
-                age, met, imf_params, remainder, keys[-1],
-                out_masses=out_masses
+                age, met, remainder, keys[-1],
+                out_masses=out_masses, imf_params=imf_params
             )
             spec_total += spec_chunk
             if out_masses:
