@@ -2,11 +2,13 @@
 # -*- coding: utf-8 -*-
 
 from functools import partial
+
 import h5py
+import numpy
 import jax
 import jax.numpy as jnp
-from astropy.io.ascii import read as ascii_read
 from jax.scipy.integrate import trapezoid
+from astropy.io.ascii import read as ascii_read
 
 from fastar.core.stellar_predictions import StellarSynthesizer
 from fastar.imf.named_imf.single_power_law import single_powerlaw as unimodal
@@ -58,8 +60,8 @@ class PopulationIngredients(StellarSynthesizer):
             self.lumi_out_data = iso['lumi_out'][:]
 
         tab = ascii_read(get_asset_path('filters_default.res'))
-        fwave = tab['col1']
-        fresp = tab['col2']
+        fwave = numpy.array(tab['col1'])
+        fresp = numpy.array(tab['col2'])
         self.filter_response = jnp.interp(
             self.wave, fwave, fresp, left=0, right=0
         )

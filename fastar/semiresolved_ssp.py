@@ -7,6 +7,7 @@ import jax
 import jax.numpy as jnp
 from jax import lax
 from jax.scipy.integrate import trapezoid
+from flax.core import FrozenDict
 
 from fastar.core.ingredients import PopulationIngredients
 from fastar.interpolate.color import color_interpolation
@@ -19,7 +20,7 @@ class SemiresolvedSynthesizer(PopulationIngredients):
     model and a stochastic IMF sampling.
     """
 
-    @partial(jax.jit, static_argnames=['self', 'num_stars', 'out_masses'])
+    @partial(jax.jit, static_argnames=['self','age','met','imf_params','num_stars', 'out_masses'])
     def synthesize(
         self, age, met, num_stars, key, imf_params=None, out_masses=False
     ):
@@ -104,13 +105,13 @@ class SemiresolvedSynthesizer(PopulationIngredients):
 
         return result
 
-
-    @partial(jax.jit, static_argnames=['self', 'num_stars'])
+    @partial(jax.jit, static_argnames=['self','num_stars'])
     def _stochastic_imf_sampling(self, imass, imf_params, num_stars, key):
         """
         Stochastically sample stellar masses from an IMF assuming
         it emerges from a probability distribution function.
         """
+        imf_params = imf_params or {}
 
         # Normalize the IMF to a total number of stars equal to 1
         # Note this normalization is different than the one used
@@ -175,76 +176,56 @@ class SemiresolvedSynthesizer(PopulationIngredients):
 
         return spec
     
+    @partial(jax.jit, static_argnames=['self', 'age','met','num_stars','imf_params','batch_size', 'out_masses'])
     def synthesize_large(
         self, age, met, num_stars, key, batch_size=10000,
         out_masses=False, imf_params=None
     ):
-        """
-        Generate a semi-resolved population spectrum for a large number of stars
-        using batched processing to reduce memory usage.
-
-        Parameters
-        ----------
-        age : float
-            Age of the stellar population (in Gyr).
-        met : float
-            Metallicity [M/H].
-        num_stars : int
-            Total number of stars to sample from the IMF.
-        key : PRNGKey
-            JAX random key for sampling.
-        batch_size : int, optional
-            Number of stars to process in each batch. Default is 10,000.
-        out_masses : bool, optional
-            If True, return the array of sampled stellar masses instead of the
-            total mass. Default is False.
-        imf_params : dict, optional
-            Dictionary of parameters for the IMF function. Default is empty.
-
-        Returns
-        -------
-        tuple
-            (wavelengths, spectrum, total stellar mass) or 
-            (wavelengths, spectrum, sampled stellar masses), depending on `out_masses`.
-        """
         imf_params = imf_params or {}
-        imass, iteff, ilogg, ilum = self._get_isochrone(age, met)
-        sampled_masses = self._stochastic_imf_sampling(
-            imass, imf_params, num_stars, key
-        )
 
-        # Number of full batches and remainder
+        # Isochrone interpolation (same for all batches)
+        imass, iteff, ilogg, ilum = self._get_isochrone(age, met)
+
+        # Sample IMF once
+        sampled_masses = self._stochastic_imf_sampling(imass, imf_params, num_stars, key)
+
+        # Split samples into batches
         n_batches = num_stars // batch_size
         remainder = num_stars % batch_size
 
-        # Prepare full-batch samples
-        full_samples = sampled_masses[: n_batches * batch_size]
+        full_samples = sampled_masses[:n_batches * batch_size]
         batches = full_samples.reshape((n_batches, batch_size))
 
-        # Initial accumulator for spectrum
-        init_spec = jnp.zeros(self.wave.shape, dtype=jnp.float32)
-
-        def batch_step(spec_accum, batch_masses):
-            spec_batch = self._synthesize_massgiven(
-                met=met, imass=imass, iteff=iteff,
-                ilogg=ilogg, ilum=ilum, sampled_masses=batch_masses
+        # Scan-compatible batch function
+        def batch_fn(batch_masses):
+            return self._synthesize_massgiven(
+                met=met,
+                imass=imass, iteff=iteff, ilogg=ilogg, ilum=ilum,
+                sampled_masses=batch_masses,
             )
-            return spec_accum + spec_batch, None
 
-        # Run all batches through lax.scan
-        spec_total, _ = lax.scan(batch_step, init_spec, batches)
+        # Initial spectrum accumulator
+        init_spec = jnp.zeros_like(self.wave)
 
-        # Handle remainder if any
-        if remainder > 0:
+        # Use lax.scan for batches
+        def scan_fn(spec_accum, batch_masses):
+            return spec_accum + batch_fn(batch_masses), None
+
+        spec_total, _ = lax.scan(scan_fn, init_spec, batches)
+
+        # Handle remainder using lax.cond (fully JAX-compatible)
+        def add_remainder(spec_accum):
             rem_masses = sampled_masses[-remainder:]
             rem_spec = self._synthesize_massgiven(
                 met=met, imass=imass, iteff=iteff,
                 ilogg=ilogg, ilum=ilum, sampled_masses=rem_masses
             )
-            spec_total += rem_spec
+            return spec_accum + rem_spec
+
+        spec_total = lax.cond(remainder > 0, add_remainder, lambda x: x, spec_total)
 
         if out_masses:
-            return (self.wave, spec_total, sampled_masses)
+            return self.wave, spec_total, sampled_masses
         else:
-            return (self.wave, spec_total, jnp.sum(sampled_masses))
+            return self.wave, spec_total, jnp.sum(sampled_masses)
         
