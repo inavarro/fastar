@@ -228,4 +228,3 @@ class SemiresolvedSynthesizer(PopulationIngredients):
             return self.wave, spec_total, sampled_masses
         else:
             return self.wave, spec_total, jnp.sum(sampled_masses)
-        
