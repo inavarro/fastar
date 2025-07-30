@@ -20,7 +20,7 @@ class SemiresolvedSynthesizer(PopulationIngredients):
     model and a stochastic IMF sampling.
     """
 
-    @partial(jax.jit, static_argnames=['self','age','met','imf_params','num_stars', 'out_masses'])
+    @partial(jax.jit, static_argnames=['self','num_stars','out_masses'])
     def synthesize(
         self, age, met, num_stars, key, imf_params=None, out_masses=False
     ):
@@ -126,12 +126,12 @@ class SemiresolvedSynthesizer(PopulationIngredients):
         cdf = cdf / cdf[-1]
 
         # Uniform sampling f the CDF
-        uniform_samples = jax.random.uniform(key, shape=(int(num_stars),))
+        uniform_samples = jax.random.uniform(key, shape=(num_stars,))
 
         return jnp.interp(uniform_samples, cdf, mass_grid)
 
 
-    @partial(jax.jit, static_argnames=['self','met'])
+    @partial(jax.jit, static_argnames=['self'])
     def _synthesize_massgiven(
         self, met, imass, iteff, ilogg, ilum, sampled_masses
     ):
@@ -176,7 +176,7 @@ class SemiresolvedSynthesizer(PopulationIngredients):
 
         return spec
     
-    @partial(jax.jit, static_argnames=['self', 'age','met','num_stars','imf_params','batch_size', 'out_masses'])
+    @partial(jax.jit, static_argnames=['self','num_stars','batch_size', 'out_masses'])
     def synthesize_large(
         self, age, met, num_stars, key, batch_size=10000,
         out_masses=False, imf_params=None
