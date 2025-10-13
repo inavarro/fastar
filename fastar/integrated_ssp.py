@@ -16,7 +16,6 @@ from jax.scipy.integrate import trapezoid
 from fastar.core.ingredients import PopulationIngredients
 from fastar.interpolate.color import color_interpolation
 
-
 class IntegratedSynthesizer(PopulationIngredients):
     """
     Class for generating synthetic integrated SSP spectroscopic and photometric
@@ -85,82 +84,59 @@ class IntegratedSynthesizer(PopulationIngredients):
 
         return self.wave, spec
 
-    @partial(jax.jit, static_argnames=['self'])
+    @partial(jax.jit, static_argnames=['self','nsim'])
     def synthesize_nsim(
         self,
         age,
         met,
         imf_params=None,
         dmet=0.1,
-        dteff=0.01,
-        dlogg=0.1,
-        nsim=10,
+        dteff=0.005,
+        dlogg=0.2,
+        nsim=50,
+        key=jr.PRNGKey(0),
     ):
         """
         Estimate SSP spectral uncertainties via Monte Carlo perturbation
-        of the stellar parameters.
-
-        Returns standard deviation of the perturbed SSP spectrum.
+        of the stellar parameters. Returns (wave, std_spectrum).
         """
 
-        key = jr.PRNGKey(random.randint(0, 2**32 - 1))
-
-        # ensure we always pass a dict to IMF **params
         imf_params = imf_params or {}
 
-        # Interpolate isochrone at given age and metallicity
+        # Base isochrone & arrays
         imass, iteff, ilogg, ilum = self._get_isochrone(age, met)
+        imf_val = self.imf_function(imass, imf_params)
+        
         imet = jnp.full_like(iteff, met)
 
-        all_specs = []
-        for _ in range(nsim):
-            # Perturb isochrone parameters
-            key, subkey1 = jr.split(key)
-            ilogg_perturbed = (
-                ilogg + jr.normal(subkey1, shape=ilogg.shape) * dlogg
-            )
-            key, subkey2 = jr.split(key)
-            iteff_perturbed = (
-                iteff + jr.normal(subkey2, shape=iteff.shape) * dteff
-            )
-            key, subkey3 = jr.split(key)
-            imet_perturbed = imet + jr.normal(subkey3, shape=imet.shape) * dmet
+        # Prepare per-sim RNG keys
+        keys = jr.split(key, nsim)
 
-            # Predict spectra for the isochrone points
-            spectra = self.predict_spectrum(
-                ilogg_perturbed, iteff_perturbed, imet_perturbed
-            )
+        def one_sim(k):
+            k1, k2, k3 = jr.split(k, 3)
+            ilogg_p = ilogg + jr.normal(k1, ilogg.shape) * dlogg
+            iteff_p = iteff + jr.normal(k2, iteff.shape) * dteff
+            imet_p  = imet  + jr.normal(k3, imet.shape)  * dmet
+            
+            spectra = self.predict_spectrum(ilogg_p, iteff_p, imet_p)
 
-            # Evaluate IMF (can be overridden per call)
-            imf_val = self.imf_function(imass, imf_params)
-
-            # Apply bolometric corrections
             bcv_val = color_interpolation(
-                ilogg_perturbed,
-                iteff_perturbed,
-                imet_perturbed,
-                self.logg_array,
-                self.teff_log10_array,
-                self.fmet_array,
-                self.bcv_grid,
+                ilogg_p, iteff_p, imet_p,
+                self.logg_array, self.teff_log10_array, self.fmet_array, self.bcv_grid
             )
 
-            # Compute AB magnitudes for each point
             magnitudes = self._compute_ab_magnitudes(spectra)
-
             vmags = -2.5 * ilum - bcv_val
             mtarg = vmags + self.sun_vmag
-            corr = 1 / jnp.power(10.0, (magnitudes - mtarg) / -2.5)
+            corr  = 1 / 10**((magnitudes - mtarg)/-2.5)
 
-            # Integrate corrected spectra over IMF-weighted stars
-            spec = self._population_synthesis_integrate(
-                spectra, corr, imf_val, imass
-            )
-            all_specs.append(spec)  # Collect each perturbed spectrum
+            spec = self._population_synthesis_integrate(spectra, corr, imf_val, imass)
+            return spec
 
-        ssp_std = jnp.std(jnp.stack(all_specs), axis=0)
-
+        specs = jax.vmap(one_sim)(keys) 
+        ssp_std = jnp.std(specs, axis=0)
         return self.wave, ssp_std
+
 
     @partial(jax.jit, static_argnames=['self'])
     def _population_synthesis_integrate(

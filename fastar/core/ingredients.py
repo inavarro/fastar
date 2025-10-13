@@ -11,7 +11,7 @@ from jax.scipy.integrate import trapezoid
 from astropy.io.ascii import read as ascii_read
 
 from fastar.core.stellar_predictions import StellarSynthesizer
-from fastar.imf.named_imf.single_power_law import single_powerlaw as unimodal
+from fastar.imf.named_imf.single_power_law import single_power_law as unimodal
 from fastar.interpolate.isochrone import isochrone_interpolation
 from fastar.tools.assets import get_asset_path
 

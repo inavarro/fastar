@@ -13,7 +13,7 @@ import jax.numpy as jnp
 import jax.scipy.integrate as jsp_integrate
 
 
-def single_powerlaw_raw(mass, m_min=0.1, m_max=100.0, alpha=2.35):
+def single_power_law_raw(mass, m_min=0.1, m_max=100.0, alpha=2.35):
     """
     Returns the normalized Salpeter IMF evaluated at `mass` over the range
     [m_min, m_max], fully JAX-compatible with numerical normalization.
@@ -48,7 +48,7 @@ def single_powerlaw_raw(mass, m_min=0.1, m_max=100.0, alpha=2.35):
     return imf_vals if imf_vals.shape[0] > 1 else imf_vals[0]
 
 
-def single_powerlaw(mass, params):
+def single_power_law(mass, params):
     """
     Wrapper for the Salpeter IMF using a parameter dictionary.
 
@@ -64,4 +64,4 @@ def single_powerlaw(mass, params):
     jnp.ndarray or float
         Normalized IMF values.
     """
-    return single_powerlaw_raw(mass, **params)
+    return single_power_law_raw(mass, **params)
