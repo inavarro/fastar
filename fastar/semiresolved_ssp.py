@@ -12,7 +12,6 @@ from flax.core import FrozenDict
 from fastar.core.ingredients import PopulationIngredients
 from fastar.interpolate.color import color_interpolation
 
-
 class SemiresolvedSynthesizer(PopulationIngredients):
     """
     Class for generating synthetic semi-resolved stellar populations
