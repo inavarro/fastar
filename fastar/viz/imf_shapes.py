@@ -4,11 +4,11 @@
 import numpy as np
 from matplotlib import pyplot as plt
 
-from fastar.imf.named_imf.broken_power_law import broken_powerlaw
+from fastar.imf.named_imf.broken_power_law import broken_power_law
 from fastar.imf.named_imf.chabrier import chabrier
 from fastar.imf.named_imf.flexi import flexi
 from fastar.imf.named_imf.kroupa import kroupa
-from fastar.imf.named_imf.single_power_law import single_powerlaw
+from fastar.imf.named_imf.single_power_law import single_power_law
 
 
 def main():
@@ -36,10 +36,10 @@ def main():
         )
 
     # Let's plot some IMFs
-    imf = single_powerlaw(mass_arr, {})
+    imf = single_power_law(mass_arr, {})
     axis.plot(mass_arr, imf, label='Single power law', linewidth=1.5)
 
-    imf = broken_powerlaw(mass_arr, {})
+    imf = broken_power_law(mass_arr, {})
     axis.plot(mass_arr, imf, label='Broken power law', linewidth=1.5)
 
     imf = flexi(mass_arr, {'beta': 2})
