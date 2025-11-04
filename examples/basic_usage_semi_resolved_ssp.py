@@ -10,7 +10,7 @@ import jax.random as jr
 import numpy as np
 from astroquery.svo_fps import SvoFps
 
-from fastar.imf.named_imf.single_power_law import single_powerlaw as unimodal
+from fastar.imf import single_power_law as unimodal
 from fastar.semiresolved_ssp import SemiresolvedSynthesizer
 from fastar.tools.utils import compute_ab_magnitudes
 

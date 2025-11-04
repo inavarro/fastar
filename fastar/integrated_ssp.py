@@ -16,6 +16,7 @@ from jax.scipy.integrate import trapezoid
 from fastar.core.ingredients import PopulationIngredients
 from fastar.interpolate.color import color_interpolation
 
+
 class IntegratedSynthesizer(PopulationIngredients):
     """
     Class for generating synthetic integrated SSP spectroscopic and photometric
@@ -136,7 +137,6 @@ class IntegratedSynthesizer(PopulationIngredients):
         specs = jax.vmap(one_sim)(keys) 
         ssp_std = jnp.std(specs, axis=0)
         return self.wave, ssp_std
-
 
     @partial(jax.jit, static_argnames=['self'])
     def _population_synthesis_integrate(
@@ -300,7 +300,6 @@ class IntegratedSynthesizer(PopulationIngredients):
         def _format_range(arr):
             """Return formatted string like '0.1-13.0' from an array."""
             return f"{np.min(arr):.2f}-{np.max(arr):.2f}"
-
 
         def _format_imf_range(imf_range):
             """Create a descriptive string for the IMF range."""
