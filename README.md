@@ -57,9 +57,9 @@ pip install .
 ## Quick Start
 
 ```python
-from fastar.integrated_ssp import IntegratedSspSynthesizer
-from fastar.imf.named_imf.kroupa import kroupa
+from fastar.integrated_ssp import IntegratedSynthesizer
+from fastar.imf import kroupa
 
-ssp = IntegratedSspSynthesizer(imf_function=kroupa)
+ssp = IntegratedSynthesizer(imf_function=kroupa)
 wave, flux = ssp.synthesize(age=10.0, met=0.0)
 ```
