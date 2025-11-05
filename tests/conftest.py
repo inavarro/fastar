@@ -3,6 +3,7 @@ Shared pytest fixtures for FASTAR test suite.
 
 This module provides common fixtures used across all test modules.
 """
+
 import pytest
 import jax
 import jax.numpy as jnp
@@ -12,7 +13,7 @@ import numpy as np
 from pathlib import Path
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope='session')
 def jax_config():
     """Configure JAX for testing."""
     # Enable 64-bit precision if needed
@@ -68,7 +69,7 @@ def test_stellar_params():
     return {
         'logg': jnp.array([3.5, 4.0, 4.5]),
         'teff': jnp.array([4500, 5500, 6500]),
-        'fmet': jnp.array([-0.5, 0.0, 0.3])
+        'fmet': jnp.array([-0.5, 0.0, 0.3]),
     }
 
 
@@ -76,41 +77,31 @@ def test_stellar_params():
 def imf_test_params():
     """Dictionary of test IMF parameters for various IMF types."""
     return {
-        'single_power_law': {
-            'm_min': 0.1,
-            'm_max': 100.0,
-            'alpha': 2.35
-        },
+        'single_power_law': {'m_min': 0.1, 'm_max': 100.0, 'alpha': 2.35},
         'broken_power_law': {
             'm_min': 0.1,
             'm_max': 100.0,
             'm_break': 0.5,
             'alpha1': 1.3,
-            'alpha2': 2.3
+            'alpha2': 2.3,
         },
-        'kroupa': {
-            'm_min': 0.1,
-            'm_max': 100.0
-        },
-        'chabrier': {
-            'm_min': 0.1,
-            'm_max': 100.0
-        },
+        'kroupa': {'m_min': 0.1, 'm_max': 100.0},
+        'chabrier': {'m_min': 0.1, 'm_max': 100.0},
         'flexi': {
             'm_min': 0.1,
             'm_max': 100.0,
             'm_peak': 0.5,
             'alpha': 2.3,
-            'beta': 2.3
-        }
+            'beta': 2.3,
+        },
     }
 
 
 @pytest.fixture
 def asset_dir():
     """Path to the fastar assets directory."""
-    fastar_dir = Path(__file__).parent.parent / "fastar"
-    return fastar_dir / "assets"
+    fastar_dir = Path(__file__).parent.parent / 'fastar'
+    return fastar_dir / 'assets'
 
 
 @pytest.fixture
@@ -133,26 +124,32 @@ def large_num_stars():
 
 # Helper functions for assertions
 
+
 def assert_normalized_imf(imf_values, mass_array, tolerance=1e-3):
     """Assert that IMF integrates to approximately 1."""
     integral = trapezoid(imf_values, x=mass_array)
-    np.testing.assert_allclose(integral, 1.0, rtol=tolerance,
-                               err_msg="IMF is not properly normalized")
+    np.testing.assert_allclose(
+        integral, 1.0, rtol=tolerance, err_msg='IMF is not properly normalized'
+    )
 
 
 def assert_positive_flux(flux):
     """Assert that all flux values are non-negative."""
-    assert jnp.all(flux >= 0), "Flux contains negative values"
+    assert jnp.all(flux >= 0), 'Flux contains negative values'
 
 
-def assert_finite_values(array, name="Array"):
+def assert_finite_values(array, name='Array'):
     """Assert that all values in array are finite."""
-    assert jnp.all(jnp.isfinite(array)), f"{name} contains non-finite values (NaN or Inf)"
+    assert jnp.all(jnp.isfinite(array)), (
+        f'{name} contains non-finite values (NaN or Inf)'
+    )
 
 
-def assert_monotonic_increasing(array, name="Array"):
+def assert_monotonic_increasing(array, name='Array'):
     """Assert that array is monotonically increasing."""
-    assert jnp.all(jnp.diff(array) > 0), f"{name} is not monotonically increasing"
+    assert jnp.all(jnp.diff(array) > 0), (
+        f'{name} is not monotonically increasing'
+    )
 
 
 # Export helper functions
@@ -160,5 +157,5 @@ __all__ = [
     'assert_normalized_imf',
     'assert_positive_flux',
     'assert_finite_values',
-    'assert_monotonic_increasing'
+    'assert_monotonic_increasing',
 ]

@@ -1,10 +1,13 @@
-"""
-Tests for IMF Registry implementation.
-"""
 import pytest
 import jax.numpy as jnp
 from fastar.imf import IMFRegistry, imf_registry
-from fastar.imf import kroupa, chabrier, single_power_law, broken_power_law, flexi
+from fastar.imf import (
+    kroupa,
+    chabrier,
+    single_power_law,
+    broken_power_law,
+    flexi,
+)
 
 
 @pytest.mark.unit
@@ -75,7 +78,7 @@ class TestIMFRegistry:
         """Test that requesting invalid IMF raises appropriate error."""
         registry = IMFRegistry()
 
-        with pytest.raises(ValueError, match="not in registry"):
+        with pytest.raises(ValueError, match='not in registry'):
             registry.load_by_name('nonexistent_imf')
 
         with pytest.raises(AttributeError):
@@ -103,7 +106,7 @@ class TestIMFRegistry:
         def custom_imf(mass, params):
             return mass ** (-2.5)
 
-        with pytest.raises(ValueError, match="already exists"):
+        with pytest.raises(ValueError, match='already exists'):
             registry.register('kroupa', custom_imf)
 
     def test_default_registry_instance(self, mass_array):
@@ -128,8 +131,12 @@ class TestIMFRegistry:
         for imf_name in available:
             imf_func = registry.load_by_name(imf_name)
             imf_values = imf_func(mass_array, {})
-            assert jnp.all(jnp.isfinite(imf_values)), f"IMF '{imf_name}' failed"
-            assert imf_values.shape == mass_array.shape, f"IMF '{imf_name}' shape mismatch"
+            assert jnp.all(jnp.isfinite(imf_values)), (
+                f"IMF '{imf_name}' failed"
+            )
+            assert imf_values.shape == mass_array.shape, (
+                f"IMF '{imf_name}' shape mismatch"
+            )
 
 
 @pytest.mark.unit

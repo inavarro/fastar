@@ -1,6 +1,3 @@
-"""
-Tests for stellar synthesizer core functionality.
-"""
 import pytest
 import jax.numpy as jnp
 from fastar.core.stellar_predictions import StellarSynthesizer
@@ -17,18 +14,20 @@ class TestStellarSynthesizer:
 
     def test_synthesizer_initialization(self, synthesizer):
         """Test that StellarSynthesizer initializes correctly."""
-        assert synthesizer is not None, "Synthesizer should initialize"
-        assert hasattr(synthesizer, 'predict_spectrum'), "Should have predict_spectrum method"
+        assert synthesizer is not None, 'Synthesizer should initialize'
+        assert hasattr(synthesizer, 'predict_spectrum'), (
+            'Should have predict_spectrum method'
+        )
 
     def test_synthesizer_has_model(self, synthesizer):
         """Test that synthesizer has loaded model."""
-        assert hasattr(synthesizer, 'model'), "Should have model attribute"
-        assert hasattr(synthesizer, 'params'), "Should have params attribute"
+        assert hasattr(synthesizer, 'model'), 'Should have model attribute'
+        assert hasattr(synthesizer, 'params'), 'Should have params attribute'
 
     def test_synthesizer_has_wavelength_grid(self, synthesizer):
         """Test that synthesizer has wavelength grid."""
-        assert hasattr(synthesizer, 'wave'), "Should have wave attribute"
-        assert len(synthesizer.wave) > 0, "Wavelength grid should not be empty"
+        assert hasattr(synthesizer, 'wave'), 'Should have wave attribute'
+        assert len(synthesizer.wave) > 0, 'Wavelength grid should not be empty'
 
     def test_predict_spectrum_returns_array(self, synthesizer):
         """Test that predict_spectrum returns an array."""
@@ -38,7 +37,7 @@ class TestStellarSynthesizer:
 
         spectra = synthesizer.predict_spectrum(logg, teff, fmet)
 
-        assert isinstance(spectra, jnp.ndarray), "Should return JAX array"
+        assert isinstance(spectra, jnp.ndarray), 'Should return JAX array'
 
     def test_predict_spectrum_finite_values(self, synthesizer):
         """Test that predict_spectrum returns finite values."""
@@ -48,7 +47,7 @@ class TestStellarSynthesizer:
 
         spectra = synthesizer.predict_spectrum(logg, teff, fmet)
 
-        assert jnp.all(jnp.isfinite(spectra)), "Spectra should be finite"
+        assert jnp.all(jnp.isfinite(spectra)), 'Spectra should be finite'
 
     def test_predict_spectrum_positive_flux(self, synthesizer):
         """Test that predict_spectrum returns non-negative flux."""
@@ -58,12 +57,14 @@ class TestStellarSynthesizer:
 
         spectra = synthesizer.predict_spectrum(logg, teff, fmet)
 
-        assert jnp.all(spectra >= 0), "Flux should be non-negative"
+        assert jnp.all(spectra >= 0), 'Flux should be non-negative'
 
     def test_softplus_activation(self, synthesizer):
         """Test that softplus activation works correctly."""
         test_input = jnp.array([0.0, 1.0, -1.0])
         result = synthesizer._softplus(test_input)
 
-        assert jnp.all(jnp.isfinite(result)), "Softplus output should be finite"
-        assert jnp.all(result >= 0), "Softplus output should be non-negative"
+        assert jnp.all(jnp.isfinite(result)), (
+            'Softplus output should be finite'
+        )
+        assert jnp.all(result >= 0), 'Softplus output should be non-negative'

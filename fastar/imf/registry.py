@@ -75,13 +75,6 @@ class IMFRegistry:
         ------
         ValueError
             If the IMF name is not found in the registry.
-
-        Examples
-        --------
-        >>> from fastar.imf import imf_registry
-        >>> kroupa_imf = imf_registry.load_by_name('kroupa')
-        >>> mass = jnp.array([0.5, 1.0, 2.0])
-        >>> imf_vals = kroupa_imf(mass, {'m_min': 0.1, 'm_max': 100.0})
         """
         name_lower = name.lower()
 
@@ -89,7 +82,7 @@ class IMFRegistry:
             available = sorted(set(self._registry.keys()))
             raise ValueError(
                 f"IMF '{name}' not in registry. "
-                f"Available IMFs: {', '.join(available)}"
+                f'Available IMFs: {", ".join(available)}'
             )
 
         return self._registry[name_lower]
@@ -107,11 +100,6 @@ class IMFRegistry:
         -------
         callable
             The IMF function.
-
-        Examples
-        --------
-        >>> from fastar.imf import imf_registry
-        >>> imf_func = imf_registry['kroupa']
         """
         return self.load_by_name(name)
 
@@ -128,11 +116,6 @@ class IMFRegistry:
         -------
         callable
             The IMF function.
-
-        Examples
-        --------
-        >>> from fastar.imf import imf_registry
-        >>> imf_func = imf_registry.kroupa
         """
         if name.startswith('_'):
             raise AttributeError(
@@ -159,21 +142,11 @@ class IMFRegistry:
         ------
         ValueError
             If the name already exists and overwrite is False.
-
-        Examples
-        --------
-        >>> from fastar.imf import imf_registry
-        >>> def my_custom_imf(mass, params):
-        ...     return mass ** (-2.5)
-        >>> imf_registry.register('custom', my_custom_imf)
-        >>> custom_imf = imf_registry.load_by_name('custom')
         """
         name_lower = name.lower()
 
         if name_lower in self._registry:
-            raise ValueError(
-                f"IMF '{name}' already exists in registry. "
-            )
+            raise ValueError(f"IMF '{name}' already exists in registry. ")
 
         self._registry[name_lower] = imf_func
 
@@ -185,12 +158,6 @@ class IMFRegistry:
         -------
         list of str
             Sorted list of unique IMF names (excluding aliases).
-
-        Examples
-        --------
-        >>> from fastar.imf import imf_registry
-        >>> imf_registry.list_available()
-        ['broken_power_law', 'chabrier', 'flexi', 'kroupa', 'single_power_law']
         """
         return sorted(self._registry.keys())
 
@@ -207,21 +174,13 @@ class IMFRegistry:
         -------
         bool
             True if the IMF exists, False otherwise.
-
-        Examples
-        --------
-        >>> from fastar.imf import imf_registry
-        >>> imf_registry.has_imf('kroupa')
-        True
-        >>> imf_registry.has_imf('nonexistent')
-        False
         """
         return name.lower() in self._registry
 
     def __repr__(self):
         """String representation of the registry."""
         available = self.list_available()
-        return f"IMFRegistry(available={available})"
+        return f'IMFRegistry(available={available})'
 
     def __len__(self):
         """Return the number of unique IMFs in the registry."""

@@ -1,6 +1,3 @@
-"""
-Tests for PCA regressor neural network model.
-"""
 import pytest
 import jax
 import jax.numpy as jnp
@@ -14,14 +11,16 @@ class TestPCARegressor:
     def test_pca_regressor_initialization(self):
         """Test that PCARegressor initializes with default parameters."""
         model = PCARegressor()
-        assert model is not None, "Model should initialize"
-        assert model.output_dim == 16, "Default output_dim should be 16"
-        assert model.activation_type == 'gelu', "Default activation should be 'gelu'"
+        assert model is not None, 'Model should initialize'
+        assert model.output_dim == 16, 'Default output_dim should be 16'
+        assert model.activation_type == 'gelu', (
+            "Default activation should be 'gelu'"
+        )
 
     def test_pca_regressor_custom_parameters(self):
         """Test that PCARegressor accepts custom parameters."""
         model = PCARegressor(output_dim=32, activation_type='relu')
-        assert model.output_dim == 32, "Output dim should be 32"
+        assert model.output_dim == 32, 'Output dim should be 32'
         assert model.activation_type == 'relu', "Activation should be 'relu'"
 
     def test_pca_regressor_forward_pass(self):
@@ -36,7 +35,9 @@ class TestPCARegressor:
         # Forward pass
         output = model.apply(params, x)
 
-        assert output.shape == (1, 16), f"Output shape should be (1, 16), got {output.shape}"
+        assert output.shape == (1, 16), (
+            f'Output shape should be (1, 16), got {output.shape}'
+        )
 
     def test_pca_regressor_output_finite(self):
         """Test that PCARegressor output is finite."""
@@ -48,7 +49,7 @@ class TestPCARegressor:
 
         output = model.apply(params, x)
 
-        assert jnp.all(jnp.isfinite(output)), "Output should be finite"
+        assert jnp.all(jnp.isfinite(output)), 'Output should be finite'
 
     def test_pca_regressor_batch_processing(self):
         """Test that PCARegressor handles batch inputs."""
@@ -61,7 +62,9 @@ class TestPCARegressor:
 
         output = model.apply(params, x)
 
-        assert output.shape == (batch_size, 16), f"Output shape should be ({batch_size}, 16)"
+        assert output.shape == (batch_size, 16), (
+            f'Output shape should be ({batch_size}, 16)'
+        )
 
     def test_pca_regressor_different_activations(self):
         """Test that different activation functions work."""
@@ -74,5 +77,7 @@ class TestPCARegressor:
             params = model.init(key, x)
             output = model.apply(params, x)
 
-            assert output.shape == (1, 16), f"Activation {act} should work"
-            assert jnp.all(jnp.isfinite(output)), f"Output with {act} should be finite"
+            assert output.shape == (1, 16), f'Activation {act} should work'
+            assert jnp.all(jnp.isfinite(output)), (
+                f'Output with {act} should be finite'
+            )
