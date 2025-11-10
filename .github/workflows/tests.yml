@@ -2,27 +2,41 @@ name: Tests
 
 on:
   push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+
+concurrency:
+  group: "${{ github.workflow }}-${{ github.ref }}"
+  cancel-in-progress: true
 
 jobs:
+  lint-format:
+    runs-on: ubuntu-22.04
+    steps:
+      - run: sudo apt -y update
+      - uses: actions/checkout@v4
+      - name: Setup the environment
+        uses: ./.github/actions/setup
+      - run: make lint
+      - run: make format
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
+    if: ${{ ! contains(github.event.head_commit.message, '[no test]') }}
+    strategy:
+      matrix:
+        python-version:
+          - '3.10'
+          - '3.11'
+          - '3.12'
+          - '3.13'
 
     steps:
-    - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8  # v5.0.0
+    - run: sudo apt -y update
+    - uses: actions/checkout@v5
 
-    - name: Set up Python
-      uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c  # v6.0.0
+    - name: Set up the environment
+      uses: ./.github/actions/setup
       with:
-        python-version: '3.10'
-
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -e .[dev]
+        python-version: ${{ matrix.python-version }}
 
     - name: Run tests
       run: |
-        pytest
+        make tests

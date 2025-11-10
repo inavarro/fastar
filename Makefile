@@ -1,67 +1,93 @@
-.PHONY: all all-dev print-env install install-all install-dev test_import whl uninstall clean clean-all static_code_analysis flake8 pylint apidoc clean-apidoc docs docs-dummy docs-html clean-docs
-		
+.DEFAULT_GOAL := install
+.PHONY: help print-env install install-dev tests test_import release clean format lint apidoc clean-apidoc docs docs-html clean-docs
 
-all: clean-all uninstall static_code_analysis install test_import whl docs
-		
+define PROJECT_HELP_MSG
 
-all-dev: clean-all uninstall static_code_analysis install-dev test_import whl docs
-		
+Usage:\n
+	\n
+    make help\t\t\t             show this message\n
+	\n
+	-------------------------------------------------------------------------\n
+	\t\tInstallation\n
+	-------------------------------------------------------------------------\n
+	make\t\t\t\t                Install fastar in the current environment\n
+	\n
+	-------------------------------------------------------------------------\n
+	\t\tDevelopment\n
+	-------------------------------------------------------------------------\n
+	make install-dev\t\t 		Install fastar for development purpose\n
+	make tests\t\t\t            Run units and integration tests\n
+	\n
+	make docs\t\t\t				Generate the documentation\n
+	\n
+	make release\t\t\t 			Build the distribution files\n
+	\n
+	make clean\t\t\t		Clean .pyc files and __pycache__ directories\n
+	\n
+	make envclean\t\t\t		Remove the local development environment\n
+	\n
+	-------------------------------------------------------------------------\n
+	\t\tOthers\n
+	-------------------------------------------------------------------------\n
+	make lint\t\t\t			Lint\n
+
+endef
+export PROJECT_HELP_MSG
+
+help:
+	echo $$PROJECT_HELP_MSG
+
+prepare-dev:
+	curl -LsSf https://astral.sh/uv/install.sh | sh
 
 print-env:
-	python --version
-	pip --version
-	pip freeze
+	uv run python --version
+	uv run pip --version
+	uv run pip freeze
 
-install: uninstall
+
+install:
 	pip install .
 
-install-dev: uninstall
-	pip install -e .
+install-dev: prepare-dev
+	uv lock && uv sync --all-groups
+	uv run pre-commit install
 
 test_import:
-	python -c "import fastar"
+	uv run python -c "import fastar; print(fastar.__version__)"
 
-whl:
-	python -m build
+release:
+	uv build
 
-uninstall:
-	pip uninstall -y fastar
+tests:
+	uv run pytest
 
 clean: clean-docs
 	rm -rf build/
 	rm -rf fastar.egg-info/
-	rm -rf fastar/__pycache__/
-	rm -rf fastar/*/__pycache__/
-	rm -rf fastar/*/*/__pycache__/
+	find . -type f -name '*.py[co]' -delete -o -type d -name __pycache__ -delete
 	rm -rf build/
 	rm -rf dist/
 
-clean-all: clean
-	rm -f fastar/_version.py
+format:
+	uv run ruff format fastar
 
-static_code_analysis: flake8 pylint
-		
-
-flake8:
-	flake8 --max-complexity 10 --exclude _version.py fastar/ examples/
-
-pylint:
-	pylint --ignore=_version.py fastar/ examples/
+lint:
+	uv run ruff check fastar
 
 apidoc: clean-apidoc
-	sphinx-apidoc -H "Reference / API" -M -o docs/api/ fastar/
+	uv run sphinx-apidoc -H "Reference / API" -M -o docs/api/ fastar/
 
 clean-apidoc:
 	rm -rf docs/api/
 
-docs: clean-docs docs-dummy docs-html
-		
-
-docs-dummy: apidoc
-	make -C docs/ dummy SPHINXOPTS="-W"
+docs: clean-docs docs-html
 
 docs-html: apidoc
-	make -C docs/ html
+	uv run sphinx-build -W --keep-going -b html docs/ _build/
 
 clean-docs: clean-apidoc
-	rm -rf docs/_build/
+	rm -rf _build/
+
+envclean:
+	rm -r .venv

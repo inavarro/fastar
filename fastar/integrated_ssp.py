@@ -1,16 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
-import random
 import os
-import h5py
 from functools import partial
 
-import numpy as np
-
+import h5py
 import jax
 import jax.numpy as jnp
 import jax.random as jr
+import numpy as np
 from jax.scipy.integrate import trapezoid
 
 from fastar.core.ingredients import PopulationIngredients
@@ -61,7 +58,6 @@ class IntegratedSynthesizer(PopulationIngredients):
 
     @partial(jax.jit, static_argnames=['self'])
     def wrapper(self, imass, iteff, ilogg, ilum, imet, imf_val):
-
         # Calculate the stellar spectra
         spectra = self.predict_spectrum(ilogg, iteff, imet)
 
@@ -93,7 +89,7 @@ class IntegratedSynthesizer(PopulationIngredients):
 
         return spec
 
-    @partial(jax.jit, static_argnames=['self','nsim'])
+    @partial(jax.jit, static_argnames=['self', 'nsim'])
     def synthesize_nsim(
         self,
         age,
@@ -115,23 +111,22 @@ class IntegratedSynthesizer(PopulationIngredients):
         # Base isochrone & arrays
         imass, iteff, ilogg, ilum = self._get_isochrone(age, met)
         imf_val = self.imf_function(imass, imf_params)
-        
+
         imet = jnp.full_like(iteff, met)
 
         # Prepare per-sim RNG keys
         k1, k2, k3 = jr.split(key, 3)
-        ilogg_p = ilogg + jr.normal(k1, (nsim,)+ilogg.shape) * dlogg
-        iteff_p = iteff + jr.normal(k2, (nsim,)+ iteff.shape) * dteff
-        imet_p  = imet  + jr.normal(k3, (nsim,)+ imet.shape) * dmet
+        ilogg_p = ilogg + jr.normal(k1, (nsim,) + ilogg.shape) * dlogg
+        iteff_p = iteff + jr.normal(k2, (nsim,) + iteff.shape) * dteff
+        imet_p = imet + jr.normal(k3, (nsim,) + imet.shape) * dmet
 
-        specs = jax.vmap(
-            self.wrapper, 
-            in_axes=(None,0,0,None,0,None)
-            )(imass, iteff_p, ilogg_p, ilum, imet_p, imf_val)
+        specs = jax.vmap(self.wrapper, in_axes=(None, 0, 0, None, 0, None))(
+            imass, iteff_p, ilogg_p, ilum, imet_p, imf_val
+        )
         ssp_std = jnp.std(specs, axis=0)
         return self.wave, ssp_std
 
-    @partial(jax.jit, static_argnames=['self','nsim'])
+    @partial(jax.jit, static_argnames=['self', 'nsim'])
     def synthesize_nsim_systematic(
         self,
         age,
@@ -162,21 +157,21 @@ class IntegratedSynthesizer(PopulationIngredients):
         k1, k2, k3 = jr.split(key, 3)
         ilogg_p = jr.normal(k1, (nsim,)) * dlogg
         iteff_p = jr.normal(k2, (nsim,)) * dteff
-        imet_p  = jr.normal(k3, (nsim,)) * dmet
+        imet_p = jr.normal(k3, (nsim,)) * dmet
 
-        ilogg_p = ilogg + ilogg_p[:,jnp.newaxis]
-        iteff_p = iteff + iteff_p[:,jnp.newaxis]
-        imet_p = imet + imet_p[:,jnp.newaxis]
+        ilogg_p = ilogg + ilogg_p[:, jnp.newaxis]
+        iteff_p = iteff + iteff_p[:, jnp.newaxis]
+        imet_p = imet + imet_p[:, jnp.newaxis]
 
-        spec0 = self.wrapper(imass, iteff, ilogg, ilum, imet, imf_val)
-        specs = jax.vmap(self.wrapper, in_axes=(None,0,0,None,0,None))(imass, iteff_p, ilogg_p, ilum, imet_p, imf_val)
+        # spec0 = self.wrapper(imass, iteff, ilogg, ilum, imet, imf_val)
+        specs = jax.vmap(self.wrapper, in_axes=(None, 0, 0, None, 0, None))(
+            imass, iteff_p, ilogg_p, ilum, imet_p, imf_val
+        )
         ssp_std = jnp.std(specs, axis=0)
         return self.wave, ssp_std
 
     @partial(jax.jit, static_argnames=['self'])
-    def _population_synthesis_integrate(
-        self, spectra, corr, imf_val, imass
-    ):
+    def _population_synthesis_integrate(self, spectra, corr, imf_val, imass):
         """
         Integrate IMF-weighted, corrected spectra over initial mass grid.
         """
@@ -282,15 +277,15 @@ class IntegratedSynthesizer(PopulationIngredients):
         age_range=None,
         met_range=None,
         imf_range=None,
-        cache_dir="ssp_cache",
-        user_label=''
+        cache_dir='ssp_cache',
+        user_label='',
     ):
         """
         Compute or load a grid of precomputed SSP spectra and save them to disk.
 
         This function evaluates the SSP model on a grid of age, metallicity, and IMF
         parameters. If a cached file with matching parameters exists, it loads the data
-        from disk. Otherwise, it computes the SSP grid, saves it to an HDF5 file, and 
+        from disk. Otherwise, it computes the SSP grid, saves it to an HDF5 file, and
         returns the resulting data arrays.
 
         Parameters
@@ -321,55 +316,73 @@ class IntegratedSynthesizer(PopulationIngredients):
             List of IMF parameter dictionaries used in the grid.
         """
 
-        age_range = jnp.array(age_range if age_range is not None else self.iso_ages)
-        met_range = jnp.array(met_range if met_range is not None else self.iso_mets)
+        age_range = jnp.array(
+            age_range if age_range is not None else self.iso_ages
+        )
+        met_range = jnp.array(
+            met_range if met_range is not None else self.iso_mets
+        )
         imf_range = imf_range if imf_range is not None else [{}]
 
         # Validate ranges
-        if (jnp.min(age_range) < jnp.min(self.ages/1000.)) or (jnp.max(age_range) > jnp.max(self.ages/1000.)):
-            raise ValueError("Age range outside isochrone limits.")
-        if (jnp.min(met_range) < jnp.min(self.mets)) or (jnp.max(met_range) > jnp.max(self.mets)):
-            raise ValueError("Metallicity range outside isochrone limits.")
+        if (jnp.min(age_range) < jnp.min(self.ages / 1000.0)) or (
+            jnp.max(age_range) > jnp.max(self.ages / 1000.0)
+        ):
+            raise ValueError('Age range outside isochrone limits.')
+        if (jnp.min(met_range) < jnp.min(self.mets)) or (
+            jnp.max(met_range) > jnp.max(self.mets)
+        ):
+            raise ValueError('Metallicity range outside isochrone limits.')
 
         # Format helpers for the output file name
         def _format_range(arr):
             """Return formatted string like '0.1-13.0' from an array."""
-            return f"{np.min(arr):.2f}-{np.max(arr):.2f}"
+            return f'{np.min(arr):.2f}-{np.max(arr):.2f}'
 
         def _format_imf_range(imf_range):
             """Create a descriptive string for the IMF range."""
             if len(imf_range) == 1 and imf_range[0] == {}:
                 # Use the name of the function as a fallback label
-                imf_func_name = getattr(self.imf_function, "__name__", "imf")
+                imf_func_name = getattr(self.imf_function, '__name__', 'imf')
                 return imf_func_name.lower()
             # Otherwise, build a param-based label
             keys = sorted(imf_range[0].keys())
             key_strs = []
             for key in keys:
                 vals = [params.get(key, None) for params in imf_range]
-                key_str = f"{key}{min(vals):.1f}-{max(vals):.1f}"
+                key_str = f'{key}{min(vals):.1f}-{max(vals):.1f}'
                 key_strs.append(key_str)
-            return "_".join(key_strs)
-    
+            return '_'.join(key_strs)
+
         # Create filename from parameter ranges
         age_str = _format_range(age_range)
         met_str = _format_range(met_range)
         imf_str = _format_imf_range(imf_range)
-        fname = f"sspgrid_age{age_str}_met{met_str}_imf{imf_str}"+self.rlabel+user_label+".hdf5"
+        fname = (
+            f'sspgrid_age{age_str}_met{met_str}_imf{imf_str}'
+            + self.rlabel
+            + user_label
+            + '.hdf5'
+        )
         cache_path = os.path.join(cache_dir, fname)
 
         # Load if exists
         if os.path.exists(cache_path):
-            print(f"Loading SSP grid from {cache_path}")
-            with h5py.File(cache_path, "r") as f:
-                wave = f["wavelength"][()]
-                spec_grid = f["spectra"][()]
+            print(f'Loading SSP grid from {cache_path}')
+            with h5py.File(cache_path, 'r') as f:
+                wave = f['wavelength'][()]
+                spec_grid = f['spectra'][()]
             return wave, spec_grid
 
-        print(f"Calculating SSP predictions")
+        print('Calculating SSP predictions')
         # Compute SSP grid
         os.makedirs(cache_dir, exist_ok=True)
-        na, nm, ni, nw = len(age_range), len(met_range), len(imf_range), len(self.wave)
+        na, nm, ni, nw = (
+            len(age_range),
+            len(met_range),
+            len(imf_range),
+            len(self.wave),
+        )
         spec_grid = jnp.zeros((na, nm, ni, nw))
 
         for ia, age in enumerate(age_range):
@@ -379,8 +392,8 @@ class IntegratedSynthesizer(PopulationIngredients):
                     spec_grid = spec_grid.at[ia, im, ii, :].set(spec)
 
         # Save
-        with h5py.File(cache_path, "w") as f:
-            f.create_dataset("wavelength", data=np.array(self.wave))
-            f.create_dataset("spectra", data=np.array(spec_grid))
+        with h5py.File(cache_path, 'w') as f:
+            f.create_dataset('wavelength', data=np.array(self.wave))
+            f.create_dataset('spectra', data=np.array(spec_grid))
 
         return self.wave, spec_grid

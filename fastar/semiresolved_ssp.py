@@ -1,13 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
 from functools import partial
 
 import jax
 import jax.numpy as jnp
 from jax import lax
 from jax.scipy.integrate import trapezoid
-from flax.core import FrozenDict
 
 from fastar.core.ingredients import PopulationIngredients
 from fastar.interpolate.color import color_interpolation
@@ -105,7 +103,7 @@ class SemiresolvedSynthesizer(PopulationIngredients):
 
         return result
 
-    @partial(jax.jit, static_argnames=['self','num_stars'])
+    @partial(jax.jit, static_argnames=['self', 'num_stars'])
     def _stochastic_imf_sampling(self, imass, imf_params, num_stars, key):
         """
         Stochastically sample stellar masses from an IMF assuming
@@ -174,11 +172,20 @@ class SemiresolvedSynthesizer(PopulationIngredients):
         spec = jnp.sum(spectra * corr[:, None], axis=0)
 
         return spec
-    
-    @partial(jax.jit, static_argnames=['self','num_stars','batch_size', 'out_masses'])
+
+    @partial(
+        jax.jit,
+        static_argnames=['self', 'num_stars', 'batch_size', 'out_masses'],
+    )
     def synthesize_large(
-        self, age, met, num_stars, key, batch_size=10000,
-        out_masses=False, imf_params=None
+        self,
+        age,
+        met,
+        num_stars,
+        key,
+        batch_size=10000,
+        out_masses=False,
+        imf_params=None,
     ):
         imf_params = imf_params or {}
 
@@ -186,20 +193,25 @@ class SemiresolvedSynthesizer(PopulationIngredients):
         imass, iteff, ilogg, ilum = self._get_isochrone(age, met)
 
         # Sample IMF once
-        sampled_masses = self._stochastic_imf_sampling(imass, imf_params, num_stars, key)
+        sampled_masses = self._stochastic_imf_sampling(
+            imass, imf_params, num_stars, key
+        )
 
         # Split samples into batches
         n_batches = num_stars // batch_size
         remainder = num_stars % batch_size
 
-        full_samples = sampled_masses[:n_batches * batch_size]
+        full_samples = sampled_masses[: n_batches * batch_size]
         batches = full_samples.reshape((n_batches, batch_size))
 
         # Scan-compatible batch function
         def batch_fn(batch_masses):
             return self._synthesize_massgiven(
                 met=met,
-                imass=imass, iteff=iteff, ilogg=ilogg, ilum=ilum,
+                imass=imass,
+                iteff=iteff,
+                ilogg=ilogg,
+                ilum=ilum,
                 sampled_masses=batch_masses,
             )
 
@@ -216,12 +228,18 @@ class SemiresolvedSynthesizer(PopulationIngredients):
         def add_remainder(spec_accum):
             rem_masses = sampled_masses[-remainder:]
             rem_spec = self._synthesize_massgiven(
-                met=met, imass=imass, iteff=iteff,
-                ilogg=ilogg, ilum=ilum, sampled_masses=rem_masses
+                met=met,
+                imass=imass,
+                iteff=iteff,
+                ilogg=ilogg,
+                ilum=ilum,
+                sampled_masses=rem_masses,
             )
             return spec_accum + rem_spec
 
-        spec_total = lax.cond(remainder > 0, add_remainder, lambda x: x, spec_total)
+        spec_total = lax.cond(
+            remainder > 0, add_remainder, lambda x: x, spec_total
+        )
 
         if out_masses:
             return self.wave, spec_total, sampled_masses
