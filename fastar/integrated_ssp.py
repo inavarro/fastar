@@ -16,6 +16,7 @@ from jax.scipy.integrate import trapezoid
 from fastar.core.ingredients import PopulationIngredients
 from fastar.interpolate.color import color_interpolation
 
+
 class IntegratedSynthesizer(PopulationIngredients):
     """
     Class for generating synthetic integrated SSP spectroscopic and photometric
@@ -171,41 +172,6 @@ class IntegratedSynthesizer(PopulationIngredients):
         specs = jax.vmap(self.wrapper, in_axes=(None,0,0,None,0,None))(imass, iteff_p, ilogg_p, ilum, imet_p, imf_val)
         ssp_std = jnp.std(specs, axis=0)
         return self.wave, ssp_std
-
-    def estimate_uncertaintites_from_hessian(
-        self,
-        age,
-        met,
-        imf_params=None,
-        dmet=0.1,
-        dteff=0.005,
-        dlogg=0.2
-    ):
-        """
-        Estimate mean SSP uncertaintites via (JAX's) hessian. Comparable to 
-        MC simulations from `synthesize_nsim_systematic`
-        """
-        imf_params = imf_params or {}
-
-        # Base isochrone & arrays
-        imass, iteff, ilogg, ilum = self._get_isochrone(age, met)
-        imf_val = self.imf_function(imass, imf_params)
-        imet = jnp.full_like(iteff, met)
-        spec0 = self.wrapper(imass, iteff, ilogg, ilum, imet, imf_val)
-
-        def mean_squared_error(dlogg, dteff, dmet):
-            spec = self.wrapper(imass, iteff+dteff, ilogg+dlogg, ilum, imet+dmet, imf_val)
-            return jnp.mean(jnp.square(spec - spec0))
-        
-        d2mse_dlogg2 = jax.hessian(mean_squared_error, 0)(0., 0., 0.)
-        d2mse_dteff2 = jax.hessian(mean_squared_error, 1)(0., 0., 0.)
-        d2mse_dmet2 = jax.hessian(mean_squared_error, 2)(0., 0., 0.)
-
-        sigma_logg = (0.5 * d2mse_dlogg2 * dlogg**2.)**0.5
-        sigma_teff = (0.5 * d2mse_dteff2 * dteff**2.)**0.5
-        sigma_met = (0.5 * d2mse_dmet2 * dmet**2.)**0.5
-
-        return sigma_logg, sigma_teff, sigma_met
 
     @partial(jax.jit, static_argnames=['self'])
     def _population_synthesis_integrate(
@@ -369,7 +335,6 @@ class IntegratedSynthesizer(PopulationIngredients):
         def _format_range(arr):
             """Return formatted string like '0.1-13.0' from an array."""
             return f"{np.min(arr):.2f}-{np.max(arr):.2f}"
-
 
         def _format_imf_range(imf_range):
             """Create a descriptive string for the IMF range."""

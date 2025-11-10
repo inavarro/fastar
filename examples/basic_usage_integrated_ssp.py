@@ -10,7 +10,7 @@ import numpy as np
 from astropy.io.ascii import read as ascii_read
 from astroquery.svo_fps import SvoFps
 
-from fastar.imf.named_imf.single_power_law import single_powerlaw as unimodal
+from fastar.imf import single_power_law as unimodal
 from fastar.integrated_ssp import IntegratedSynthesizer
 from fastar.tools.utils import compute_ab_magnitudes
 from fastar.tools.utils import compute_linetrength

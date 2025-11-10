@@ -12,6 +12,7 @@ from flax.core import FrozenDict
 from fastar.core.ingredients import PopulationIngredients
 from fastar.interpolate.color import color_interpolation
 
+
 class SemiresolvedSynthesizer(PopulationIngredients):
     """
     Class for generating synthetic semi-resolved stellar populations
@@ -19,7 +20,7 @@ class SemiresolvedSynthesizer(PopulationIngredients):
     model and a stochastic IMF sampling.
     """
 
-    @partial(jax.jit, static_argnames=['self','num_stars','out_masses'])
+    @partial(jax.jit, static_argnames=['self', 'num_stars', 'out_masses'])
     def synthesize(
         self, age, met, num_stars, key, imf_params=None, out_masses=False
     ):
@@ -128,7 +129,6 @@ class SemiresolvedSynthesizer(PopulationIngredients):
         uniform_samples = jax.random.uniform(key, shape=(num_stars,))
 
         return jnp.interp(uniform_samples, cdf, mass_grid)
-
 
     @partial(jax.jit, static_argnames=['self'])
     def _synthesize_massgiven(

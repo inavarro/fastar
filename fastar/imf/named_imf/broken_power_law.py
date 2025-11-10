@@ -12,7 +12,7 @@ import jax.numpy as jnp
 import jax.scipy.integrate as jsp_integrate
 
 
-def broken_powerlaw_raw(
+def broken_power_law_raw(
     mass, m_min=0.1, m_max=100.0, m_break=0.5, alpha1=1.3, alpha2=2.3
 ):
     """
@@ -57,7 +57,7 @@ def broken_powerlaw_raw(
     return imf_vals if imf_vals.shape[0] > 1 else imf_vals[0]
 
 
-def broken_powerlaw(mass, params):
+def broken_power_law(mass, params):
     """
     Wrapper for the broken power-law IMF using a parameter dictionary.
 
@@ -66,11 +66,11 @@ def broken_powerlaw(mass, params):
     mass : array-like
         Stellar mass or array of masses.
     params : dict
-        Dictionary of parameters to pass to `broken_powerlaw_raw`.
+        Dictionary of parameters to pass to `broken_power_law_raw`.
 
     Returns
     -------
     jnp.ndarray or float
         Normalized IMF values.
     """
-    return broken_powerlaw_raw(mass, **params)
+    return broken_power_law_raw(mass, **params)
