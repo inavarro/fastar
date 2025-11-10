@@ -45,8 +45,10 @@ resolution element is not large enough.
 ## Installation
 
 ```bash
-git clone git@github.com:inavarro/fastar.git
+git clone https://github.com/inavarro/fastar.git
 cd fastar/
+conda create -n fastar_env
+conda activate fastar_env
 pip install .
 ```
 

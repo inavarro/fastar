@@ -50,11 +50,19 @@ class IntegratedSynthesizer(PopulationIngredients):
         # Mock metallicity array
         imet = jnp.full_like(iteff, met)
 
-        # Calculate the stellar spectra
-        spectra = self.predict_spectrum(ilogg, iteff, imet)
-
         # Evaluate IMF value at the isochrone stellar masses
         imf_val = self.imf_function(imass, imf_params)
+
+        # Evaluate the SSP
+        spec = self.wrapper(imass, iteff, ilogg, ilum, imet, imf_val)
+
+        return self.wave, spec
+
+    @partial(jax.jit, static_argnames=['self'])
+    def wrapper(self, imass, iteff, ilogg, ilum, imet, imf_val):
+
+        # Calculate the stellar spectra
+        spectra = self.predict_spectrum(ilogg, iteff, imet)
 
         # Calculate the bolometric corrections
         bcv_val = color_interpolation(
@@ -82,7 +90,7 @@ class IntegratedSynthesizer(PopulationIngredients):
             spectra, corr, imf_val, imass
         )
 
-        return self.wave, spec
+        return spec
 
     @partial(jax.jit, static_argnames=['self','nsim'])
     def synthesize_nsim(
@@ -110,33 +118,94 @@ class IntegratedSynthesizer(PopulationIngredients):
         imet = jnp.full_like(iteff, met)
 
         # Prepare per-sim RNG keys
-        keys = jr.split(key, nsim)
+        k1, k2, k3 = jr.split(key, 3)
+        ilogg_p = ilogg + jr.normal(k1, (nsim,)+ilogg.shape) * dlogg
+        iteff_p = iteff + jr.normal(k2, (nsim,)+ iteff.shape) * dteff
+        imet_p  = imet  + jr.normal(k3, (nsim,)+ imet.shape) * dmet
 
-        def one_sim(k):
-            k1, k2, k3 = jr.split(k, 3)
-            ilogg_p = ilogg + jr.normal(k1, ilogg.shape) * dlogg
-            iteff_p = iteff + jr.normal(k2, iteff.shape) * dteff
-            imet_p  = imet  + jr.normal(k3, imet.shape)  * dmet
-            
-            spectra = self.predict_spectrum(ilogg_p, iteff_p, imet_p)
-
-            bcv_val = color_interpolation(
-                ilogg_p, iteff_p, imet_p,
-                self.logg_array, self.teff_log10_array, self.fmet_array, self.bcv_grid
-            )
-
-            magnitudes = self._compute_ab_magnitudes(spectra)
-            vmags = -2.5 * ilum - bcv_val
-            mtarg = vmags + self.sun_vmag
-            corr  = 1 / 10**((magnitudes - mtarg)/-2.5)
-
-            spec = self._population_synthesis_integrate(spectra, corr, imf_val, imass)
-            return spec
-
-        specs = jax.vmap(one_sim)(keys) 
+        specs = jax.vmap(
+            self.wrapper, 
+            in_axes=(None,0,0,None,0,None)
+            )(imass, iteff_p, ilogg_p, ilum, imet_p, imf_val)
         ssp_std = jnp.std(specs, axis=0)
         return self.wave, ssp_std
 
+    @partial(jax.jit, static_argnames=['self','nsim'])
+    def synthesize_nsim_systematic(
+        self,
+        age,
+        met,
+        imf_params=None,
+        dmet=0.1,
+        dteff=0.005,
+        dlogg=0.2,
+        nsim=50,
+        key=jr.PRNGKey(0),
+    ):
+        """
+        Estimate SSP spectral uncertainties via Monte Carlo perturbation
+        of the stellar parameters. In contrast to `synthesize_nsim`, this
+        systematically shifts parameters of all stars in the SSP by the same
+        amount. Returns (wave, std_spectrum).
+        """
+
+        imf_params = imf_params or {}
+
+        # Base isochrone & arrays
+        imass, iteff, ilogg, ilum = self._get_isochrone(age, met)
+        imf_val = self.imf_function(imass, imf_params)
+
+        imet = jnp.full_like(iteff, met)
+
+        # Prepare per-sim RNG keys
+        k1, k2, k3 = jr.split(key, 3)
+        ilogg_p = jr.normal(k1, (nsim,)) * dlogg
+        iteff_p = jr.normal(k2, (nsim,)) * dteff
+        imet_p  = jr.normal(k3, (nsim,)) * dmet
+
+        ilogg_p = ilogg + ilogg_p[:,jnp.newaxis]
+        iteff_p = iteff + iteff_p[:,jnp.newaxis]
+        imet_p = imet + imet_p[:,jnp.newaxis]
+
+        spec0 = self.wrapper(imass, iteff, ilogg, ilum, imet, imf_val)
+        specs = jax.vmap(self.wrapper, in_axes=(None,0,0,None,0,None))(imass, iteff_p, ilogg_p, ilum, imet_p, imf_val)
+        ssp_std = jnp.std(specs, axis=0)
+        return self.wave, ssp_std
+
+    def estimate_uncertaintites_from_hessian(
+        self,
+        age,
+        met,
+        imf_params=None,
+        dmet=0.1,
+        dteff=0.005,
+        dlogg=0.2
+    ):
+        """
+        Estimate mean SSP uncertaintites via (JAX's) hessian. Comparable to 
+        MC simulations from `synthesize_nsim_systematic`
+        """
+        imf_params = imf_params or {}
+
+        # Base isochrone & arrays
+        imass, iteff, ilogg, ilum = self._get_isochrone(age, met)
+        imf_val = self.imf_function(imass, imf_params)
+        imet = jnp.full_like(iteff, met)
+        spec0 = self.wrapper(imass, iteff, ilogg, ilum, imet, imf_val)
+
+        def mean_squared_error(dlogg, dteff, dmet):
+            spec = self.wrapper(imass, iteff+dteff, ilogg+dlogg, ilum, imet+dmet, imf_val)
+            return jnp.mean(jnp.square(spec - spec0))
+        
+        d2mse_dlogg2 = jax.hessian(mean_squared_error, 0)(0., 0., 0.)
+        d2mse_dteff2 = jax.hessian(mean_squared_error, 1)(0., 0., 0.)
+        d2mse_dmet2 = jax.hessian(mean_squared_error, 2)(0., 0., 0.)
+
+        sigma_logg = (0.5 * d2mse_dlogg2 * dlogg**2.)**0.5
+        sigma_teff = (0.5 * d2mse_dteff2 * dteff**2.)**0.5
+        sigma_met = (0.5 * d2mse_dmet2 * dmet**2.)**0.5
+
+        return sigma_logg, sigma_teff, sigma_met
 
     @partial(jax.jit, static_argnames=['self'])
     def _population_synthesis_integrate(
