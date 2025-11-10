@@ -51,6 +51,7 @@ install:
 
 install-dev: prepare-dev
 	uv lock && uv sync --all-groups
+	uv run pre-commit install
 
 test_import:
 	uv run python -c "import fastar; print(fastar.__version__)"
