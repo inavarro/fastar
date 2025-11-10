@@ -1,6 +1,6 @@
 <br>
 <p align="center">
-  <img src="docs/_static/fastar_logo-text-black_and_white.png" width="300"
+  <img src="docs/_static/fastar_logo.png" width="300"
    alt="FaStar logo">
 </p>
 <br>
