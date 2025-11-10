@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
 import numpy as np
 from astropy.io import fits
 from astroquery.svo_fps import SvoFps
@@ -29,9 +28,7 @@ def main():
     # # **SHOULD NOT BE USED FOR SPECTROSCOPIC MEASUREMENTS**
     # # ---------------------------------------------------
     # # Load the synthesis code
-    ssp_phot = IntegratedSynthesizer(
-        model_label='phot', imf_function=unimodal
-    )
+    ssp_phot = IntegratedSynthesizer(model_label='phot', imf_function=unimodal)
 
     phot_wave, phot_spec = ssp_phot.synthesize(age=age, met=met)
 
