@@ -17,7 +17,7 @@ Welcome to FaStar's documentation!
 .. toctree::
    :maxdepth: 1
 
-   api/modules
+   api_reference
    todo_list
 
 

@@ -44,10 +44,28 @@ extensions = [
     'sphinx.ext.coverage',
     'sphinx.ext.mathjax',
     'sphinx.ext.viewcode',
-    'sphinx_rtd_theme',
     'sphinx.ext.napoleon',
     'sphinx.ext.autosummary',
 ]
+
+autosummary_generate = True
+
+autodoc_default_options = {
+    "members": True,
+    "undoc-members": False,
+    "show-inheritance": True,
+    # "inherited-members": True,  # enable if you want inherited methods listed
+}
+
+napoleon_use_param = True
+napoleon_use_rtype = True
+
+# Theme options
+html_theme_options = {
+    "collapse_navigation": True,   # collapse nested sections by default
+    "show_navbar_depth": 1,        # how deep headers appear in the sidebar
+    "show_toc_level": 1,           # how deep the right-hand “On this page” toc goes
+}
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -70,7 +88,7 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'sphinx_rtd_theme'
+html_theme = "sphinx_book_theme"
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
