@@ -96,7 +96,7 @@ html_theme = "sphinx_book_theme"
 html_static_path = ['_static']
 
 # HTML logo and favicon
-html_logo = '_static/fastar_logo-wo_text.png'
+html_logo = '_static/fastar_logo-text-black_and_white.png'
 html_favicon = '_static/fastar_favicon.ico'
 
 
