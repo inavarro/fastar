@@ -5,6 +5,7 @@ __pycache__/
 
 # Distribution / packaging
 build/
+_build/
 dist/
 *.egg-info/
 _version.py
@@ -39,3 +40,5 @@ Thumbs.db
 # Built documentation
 docs/_build/
 docs/api/
+
+uv.lock
