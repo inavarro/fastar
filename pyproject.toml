@@ -36,7 +36,7 @@ dev = [
   "build>=1.2.2.post1",
   "pre-commit~=3.5",
   "pytest>=8.3.4",
-  "ruff>=0.12.3",
+  "ruff>=0.14.4",
 ]
 docs = [
   "Sphinx>=4.3.2",
@@ -61,7 +61,7 @@ packages = ["fastar"]
 version_file = "fastar/_version.py"
 
 [tool.ruff]
-line-length = 79
+line-length = 88
 
 [tool.ruff.format]
 quote-style = "single"
