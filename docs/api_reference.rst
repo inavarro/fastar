@@ -7,3 +7,5 @@ API reference
    :hidden:
 
    fastar
+
+See :doc:`api/fastar` for the top-level package index.

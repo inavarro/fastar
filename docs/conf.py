@@ -49,12 +49,10 @@ extensions = [
 ]
 
 autosummary_generate = True
-
 autodoc_default_options = {
     "members": True,
     "undoc-members": False,
     "show-inheritance": True,
-    # "inherited-members": True,  # enable if you want inherited methods listed
 }
 
 napoleon_use_param = True
@@ -62,7 +60,6 @@ napoleon_use_rtype = True
 
 # Theme options
 html_theme_options = {
-    "collapse_navigation": True,   # collapse nested sections by default
     "show_navbar_depth": 1,        # how deep headers appear in the sidebar
     "show_toc_level": 1,           # how deep the right-hand “On this page” toc goes
 }

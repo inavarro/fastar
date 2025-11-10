@@ -20,7 +20,6 @@ Welcome to FaStar's documentation!
    api_reference
    todo_list
 
-
 Indices and tables
 ==================
 
