@@ -75,13 +75,18 @@ format:
 lint:
 	uv run ruff check fastar
 
-docs: clean-docs docs-html
+docs: clean-docs docs-html docs-pdf
 
 docs-html:
 	uv run sphinx-build -W --keep-going -b html docs/ _build/
 
+docs-pdf:
+	uv run sphinx-build -W --keep-going -b latex docs/ _build_pdf/
+	make -C _build_pdf/
+
 clean-docs:
 	rm -rf _build/
+	rm -rf _build_pdf/
 	rm -rf docs/_autoapi
 
 envclean:
