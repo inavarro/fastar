@@ -62,7 +62,14 @@ napoleon_use_rtype = True
 html_theme_options = {
     "show_navbar_depth": 1,        # how deep headers appear in the sidebar
     "show_toc_level": 1,           # how deep the right-hand “On this page” toc goes
+    "logo": {
+      "image_light": "_static/fastar_logo.png",
+      "image_dark": "_static/fastar_logo_dark.png",
+   }
 }
+
+# HTML logo and favicon
+html_favicon = '_static/fastar_favicon.ico'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -92,9 +99,7 @@ html_theme = "sphinx_book_theme"
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
 
-# HTML logo and favicon
-html_logo = '_static/fastar_logo.png'
-html_favicon = '_static/fastar_favicon.ico'
+
 
 
 # -- Extension configuration -------------------------------------------------
