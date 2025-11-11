@@ -31,6 +31,7 @@ release = importlib_metadata_version('fastar')
 # version = '.'.join(release.split('.')[:2])
 version = release
 
+autodoc_mock_imports = ["fastar._version"]
 
 # -- General configuration ---------------------------------------------------
 
@@ -100,8 +101,6 @@ html_theme = "sphinx_book_theme"
 html_static_path = ['_static']
 
 
-
-
 # -- Extension configuration -------------------------------------------------
 
 # -- Options for intersphinx extension ---------------------------------------
@@ -120,3 +119,4 @@ todo_include_todos = True
 
 napoleon_google_docstring = False
 napoleon_numpy_docstring = True
+
