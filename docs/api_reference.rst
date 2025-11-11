@@ -1,11 +1,10 @@
 API
 =============
 
-.. autosummary::
-   :toctree: api
-   :recursive:
-   :hidden:
+.. toctree::
+   :maxdepth: 2
 
-   fastar
-
-See :doc:`api/fastar` for the top-level package index.
+   api.integrated_ssp
+   api.semiresolved_ssp
+   api.stellar_spectra
+   api.other_modules

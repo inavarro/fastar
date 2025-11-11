@@ -38,7 +38,6 @@ Thumbs.db
 *~
 
 # Built documentation
-docs/_build/
-docs/api/
+docs/_autoapi/
 
 uv.lock
