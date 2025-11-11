@@ -39,8 +39,11 @@ dev = [
   "ruff>=0.14.4",
 ]
 docs = [
+  "asdf-astropy>=0.7.1",
+  "astropy>=6.1.7",
+  "nbsphinx>=0.9.7",
   "Sphinx>=4.3.2",
-  "sphinx-book-theme>=1.1.4"
+  "sphinx-book-theme>=1.1.4",
 ]
 
 [project.scripts]

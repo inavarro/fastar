@@ -77,16 +77,20 @@ lint:
 
 docs: clean-docs docs-html docs-pdf
 
-docs-html:
-	uv run sphinx-build -W --keep-going -b html docs/ _build/
+docs-html: clean-html
+	uv run --with jupyter sphinx-build -W --keep-going -b html docs/ _build/
 
-docs-pdf:
-	uv run sphinx-build -W --keep-going -b latex docs/ _build_pdf/
+docs-pdf: clean-pdf
+	uv run --with jupyter sphinx-build -W --keep-going -b latex docs/ _build_pdf/
 	make -C _build_pdf/
 
-clean-docs:
+clean-html:
 	rm -rf _build/
+
+clean-pdf:
 	rm -rf _build_pdf/
+
+clean-docs: clean-html clean-pdf
 	rm -rf docs/_autoapi
 
 envclean:
