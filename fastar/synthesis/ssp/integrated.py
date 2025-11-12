@@ -10,7 +10,7 @@ import jax.random as jr
 import numpy as np
 from jax.scipy.integrate import trapezoid
 
-from .base_ssp import PopulationIngredients
+from .base import PopulationIngredients
 from fastar.interpolate.color import color_interpolation
 
 

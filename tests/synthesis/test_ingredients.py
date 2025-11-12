@@ -2,7 +2,7 @@
 import jax.numpy as jnp
 import pytest
 
-from fastar.synthesis.base_ssp import PopulationIngredients
+from fastar.synthesis.ssp.base import PopulationIngredients
 
 
 @pytest.mark.unit

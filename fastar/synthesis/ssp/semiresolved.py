@@ -7,7 +7,7 @@ import jax.numpy as jnp
 from jax import lax
 from jax.scipy.integrate import trapezoid
 
-from .base_ssp import PopulationIngredients
+from .base import PopulationIngredients
 from fastar.interpolate.color import color_interpolation
 
 
