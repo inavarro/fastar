@@ -52,12 +52,12 @@ class IntegratedSSPSynthesizer(BaseSSPSynthesizer):
         imf_val = self.imf_function(imass, imf_params)
 
         # Evaluate the SSP
-        spec = self.wrapper(imass, iteff, ilogg, ilum, imet, imf_val)
+        spec = self._wrapper(imass, iteff, ilogg, ilum, imet, imf_val)
 
         return self.wave, spec
 
     @partial(jax.jit, static_argnames=['self'])
-    def wrapper(self, imass, iteff, ilogg, ilum, imet, imf_val):
+    def _wrapper(self, imass, iteff, ilogg, ilum, imet, imf_val):
         # Calculate the stellar spectra
         spectra = self.predict_spectrum(ilogg, iteff, imet)
 
@@ -118,7 +118,7 @@ class IntegratedSSPSynthesizer(BaseSSPSynthesizer):
         iteff_p = iteff + jr.normal(k2, (nsim,) + iteff.shape) * dteff
         imet_p = imet + jr.normal(k3, (nsim,) + imet.shape) * dmet
 
-        specs = jax.vmap(self.wrapper, in_axes=(None, 0, 0, None, 0, None))(
+        specs = jax.vmap(self._wrapper, in_axes=(None, 0, 0, None, 0, None))(
             imass, iteff_p, ilogg_p, ilum, imet_p, imf_val
         )
         ssp_std = jnp.std(specs, axis=0)
@@ -161,8 +161,8 @@ class IntegratedSSPSynthesizer(BaseSSPSynthesizer):
         iteff_p = iteff + iteff_p[:, jnp.newaxis]
         imet_p = imet + imet_p[:, jnp.newaxis]
 
-        # spec0 = self.wrapper(imass, iteff, ilogg, ilum, imet, imf_val)
-        specs = jax.vmap(self.wrapper, in_axes=(None, 0, 0, None, 0, None))(
+        # spec0 = self._wrapper(imass, iteff, ilogg, ilum, imet, imf_val)
+        specs = jax.vmap(self._wrapper, in_axes=(None, 0, 0, None, 0, None))(
             imass, iteff_p, ilogg_p, ilum, imet_p, imf_val
         )
         ssp_std = jnp.std(specs, axis=0)
