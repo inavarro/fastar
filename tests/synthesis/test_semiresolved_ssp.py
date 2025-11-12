@@ -1,18 +1,20 @@
-import pytest
+# -*- coding: utf-8 -*-
 import jax.numpy as jnp
 import jax.random as jr
-from fastar.semiresolved_ssp import SemiresolvedSynthesizer
+import pytest
+
+from fastar import SemiresolvedSSPSynthesizer
 
 
 @pytest.mark.unit
 @pytest.mark.synthesis
-class TestSemiresolvedSynthesizer:
+class TestSemiresolvedSSPSynthesizer:
     """Test suite for SemiresolvedSynthesizer."""
 
     @pytest.fixture
     def synthesizer(self):
         """Create a SemiresolvedSynthesizer instance."""
-        return SemiresolvedSynthesizer()
+        return SemiresolvedSSPSynthesizer()
 
     @pytest.fixture
     def prng_key(self):
@@ -26,26 +28,18 @@ class TestSemiresolvedSynthesizer:
             'Synthesizer should have synthesize method'
         )
 
-    def test_synthesize_returns_tuple(
-        self, synthesizer, prng_key, small_num_stars
-    ):
+    def test_synthesize_returns_tuple(self, synthesizer, prng_key, small_num_stars):
         """Test that synthesize returns a tuple."""
         age = 1.0  # Gyr
         met = 0.0  # Solar metallicity
         imf_params = {'m_min': 0.1, 'm_max': 100.0, 'alpha': 2.35}
 
-        result = synthesizer.synthesize(
-            age, met, small_num_stars, prng_key, imf_params
-        )
+        result = synthesizer.synthesize(age, met, small_num_stars, prng_key, imf_params)
 
         assert isinstance(result, tuple), 'Synthesize should return a tuple'
-        assert len(result) == 3, (
-            'Synthesize should return (wavelength, spectrum, mass)'
-        )
+        assert len(result) == 3, 'Synthesize should return (wavelength, spectrum, mass)'
 
-    def test_synthesize_finite_output(
-        self, synthesizer, prng_key, small_num_stars
-    ):
+    def test_synthesize_finite_output(self, synthesizer, prng_key, small_num_stars):
         """Test that synthesize returns finite values."""
         age = 5.0
         met = -0.5
@@ -59,9 +53,7 @@ class TestSemiresolvedSynthesizer:
         assert jnp.all(jnp.isfinite(spectrum)), 'Spectrum should be finite'
         assert jnp.isfinite(mass), 'Total mass should be finite'
 
-    def test_synthesize_positive_flux(
-        self, synthesizer, prng_key, small_num_stars
-    ):
+    def test_synthesize_positive_flux(self, synthesizer, prng_key, small_num_stars):
         """Test that synthesize returns non-negative flux values."""
         age = 1.0
         met = 0.0
@@ -73,9 +65,7 @@ class TestSemiresolvedSynthesizer:
 
         assert jnp.all(spectrum >= 0), 'Spectrum should be non-negative'
 
-    def test_synthesize_positive_mass(
-        self, synthesizer, prng_key, small_num_stars
-    ):
+    def test_synthesize_positive_mass(self, synthesizer, prng_key, small_num_stars):
         """Test that total mass is positive."""
         age = 1.0
         met = 0.0
@@ -87,9 +77,7 @@ class TestSemiresolvedSynthesizer:
 
         assert mass > 0, 'Total mass should be positive'
 
-    def test_synthesize_stochastic_variance(
-        self, synthesizer, small_num_stars
-    ):
+    def test_synthesize_stochastic_variance(self, synthesizer, small_num_stars):
         """Test that different random keys produce different results."""
         age = 1.0
         met = 0.0
@@ -111,9 +99,7 @@ class TestSemiresolvedSynthesizer:
             'Different random keys should produce different spectra'
         )
 
-    def test_synthesize_out_masses_option(
-        self, synthesizer, prng_key, small_num_stars
-    ):
+    def test_synthesize_out_masses_option(self, synthesizer, prng_key, small_num_stars):
         """Test that out_masses=True returns array of stellar masses."""
         age = 1.0
         met = 0.0

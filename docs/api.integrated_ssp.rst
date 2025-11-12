@@ -5,4 +5,4 @@ Integrated SSP synthesis
    :toctree: _autoapi
    :recursive:
 
-   fastar.integrated_ssp
+   fastar.IntegratedSSPSynthesizer

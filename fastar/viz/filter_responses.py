@@ -5,8 +5,8 @@ from astropy.io import fits
 from astroquery.svo_fps import SvoFps
 from matplotlib import pyplot as plt
 
+from fastar import IntegratedSSPSynthesizer
 from fastar.imf import single_power_law as unimodal
-from fastar.integrated_ssp import IntegratedSynthesizer
 
 
 def main():
@@ -14,7 +14,7 @@ def main():
     # Spectroscopic predictions
     # ---------------------------------------------------
     # Load the synthesis code
-    ssp_spec = IntegratedSynthesizer(imf_function=unimodal)
+    ssp_spec = IntegratedSSPSynthesizer(imf_function=unimodal)
 
     # Let's focus now on a single SSP
     age = 12
@@ -28,7 +28,7 @@ def main():
     # # **SHOULD NOT BE USED FOR SPECTROSCOPIC MEASUREMENTS**
     # # ---------------------------------------------------
     # # Load the synthesis code
-    ssp_phot = IntegratedSynthesizer(model_label='phot', imf_function=unimodal)
+    ssp_phot = IntegratedSSPSynthesizer(model_label='phot', imf_function=unimodal)
 
     phot_wave, phot_spec = ssp_phot.synthesize(age=age, met=met)
 
@@ -46,29 +46,19 @@ def main():
 
     # Load HiPERCAM filters
     data = SvoFps.get_transmission_data('GTC/HIPERCAM.u')
-    utrans = np.interp(
-        mwave, data['Wavelength'], data['Transmission'], left=0, right=0
-    )
+    utrans = np.interp(mwave, data['Wavelength'], data['Transmission'], left=0, right=0)
 
     data = SvoFps.get_transmission_data('GTC/HIPERCAM.g')
-    gtrans = np.interp(
-        mwave, data['Wavelength'], data['Transmission'], left=0, right=0
-    )
+    gtrans = np.interp(mwave, data['Wavelength'], data['Transmission'], left=0, right=0)
 
     data = SvoFps.get_transmission_data('GTC/HIPERCAM.r')
-    rtrans = np.interp(
-        mwave, data['Wavelength'], data['Transmission'], left=0, right=0
-    )
+    rtrans = np.interp(mwave, data['Wavelength'], data['Transmission'], left=0, right=0)
 
     data = SvoFps.get_transmission_data('GTC/HIPERCAM.i')
-    itrans = np.interp(
-        mwave, data['Wavelength'], data['Transmission'], left=0, right=0
-    )
+    itrans = np.interp(mwave, data['Wavelength'], data['Transmission'], left=0, right=0)
 
     data = SvoFps.get_transmission_data('GTC/HIPERCAM.z')
-    ztrans = np.interp(
-        mwave, data['Wavelength'], data['Transmission'], left=0, right=0
-    )
+    ztrans = np.interp(mwave, data['Wavelength'], data['Transmission'], left=0, right=0)
 
     plt.figure(figsize=(12, 6))
 
@@ -102,8 +92,7 @@ def main():
     plt.plot(
         phot_wave,
         (
-            phot_spec
-            / np.mean(phot_spec[(phot_wave > 5000) & (phot_wave < 5100)])  # noqa: E501,W503
+            phot_spec / np.mean(phot_spec[(phot_wave > 5000) & (phot_wave < 5100)])  # noqa: E501,W503
         ),
         label='Photometric SSP',
         color='blue',

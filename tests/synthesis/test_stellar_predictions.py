@@ -1,6 +1,8 @@
-import pytest
+# -*- coding: utf-8 -*-
 import jax.numpy as jnp
-from fastar.core.stellar_predictions import StellarSynthesizer
+import pytest
+
+from fastar import StellarSynthesizer
 
 
 @pytest.mark.unit
@@ -64,7 +66,5 @@ class TestStellarSynthesizer:
         test_input = jnp.array([0.0, 1.0, -1.0])
         result = synthesizer._softplus(test_input)
 
-        assert jnp.all(jnp.isfinite(result)), (
-            'Softplus output should be finite'
-        )
+        assert jnp.all(jnp.isfinite(result)), 'Softplus output should be finite'
         assert jnp.all(result >= 0), 'Softplus output should be non-negative'

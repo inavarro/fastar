@@ -5,4 +5,4 @@ Stellar spectra synthesis
    :toctree: _autoapi
    :recursive:
 
-   fastar.core.stellar_predictions
+   fastar.StellarSynthesizer

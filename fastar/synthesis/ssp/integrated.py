@@ -10,11 +10,11 @@ import jax.random as jr
 import numpy as np
 from jax.scipy.integrate import trapezoid
 
-from fastar.core.ingredients import PopulationIngredients
+from .base import BaseSSPSynthesizer
 from fastar.interpolate.color import color_interpolation
 
 
-class IntegratedSynthesizer(PopulationIngredients):
+class IntegratedSSPSynthesizer(BaseSSPSynthesizer):
     """
     Class for generating synthetic integrated SSP spectroscopic and photometric
     predictions with a PCA-based stellar spectral model.
@@ -52,12 +52,12 @@ class IntegratedSynthesizer(PopulationIngredients):
         imf_val = self.imf_function(imass, imf_params)
 
         # Evaluate the SSP
-        spec = self.wrapper(imass, iteff, ilogg, ilum, imet, imf_val)
+        spec = self._wrapper(imass, iteff, ilogg, ilum, imet, imf_val)
 
         return self.wave, spec
 
     @partial(jax.jit, static_argnames=['self'])
-    def wrapper(self, imass, iteff, ilogg, ilum, imet, imf_val):
+    def _wrapper(self, imass, iteff, ilogg, ilum, imet, imf_val):
         # Calculate the stellar spectra
         spectra = self.predict_spectrum(ilogg, iteff, imet)
 
@@ -83,9 +83,7 @@ class IntegratedSynthesizer(PopulationIngredients):
         corr = 1 / jnp.power(10.0, (magnitudes - mtarg) / -2.5)
 
         # Integrate corrected spectra over IMF-weighted stars
-        spec = self._population_synthesis_integrate(
-            spectra, corr, imf_val, imass
-        )
+        spec = self._population_synthesis_integrate(spectra, corr, imf_val, imass)
 
         return spec
 
@@ -120,7 +118,7 @@ class IntegratedSynthesizer(PopulationIngredients):
         iteff_p = iteff + jr.normal(k2, (nsim,) + iteff.shape) * dteff
         imet_p = imet + jr.normal(k3, (nsim,) + imet.shape) * dmet
 
-        specs = jax.vmap(self.wrapper, in_axes=(None, 0, 0, None, 0, None))(
+        specs = jax.vmap(self._wrapper, in_axes=(None, 0, 0, None, 0, None))(
             imass, iteff_p, ilogg_p, ilum, imet_p, imf_val
         )
         ssp_std = jnp.std(specs, axis=0)
@@ -163,8 +161,8 @@ class IntegratedSynthesizer(PopulationIngredients):
         iteff_p = iteff + iteff_p[:, jnp.newaxis]
         imet_p = imet + imet_p[:, jnp.newaxis]
 
-        # spec0 = self.wrapper(imass, iteff, ilogg, ilum, imet, imf_val)
-        specs = jax.vmap(self.wrapper, in_axes=(None, 0, 0, None, 0, None))(
+        # spec0 = self._wrapper(imass, iteff, ilogg, ilum, imet, imf_val)
+        specs = jax.vmap(self._wrapper, in_axes=(None, 0, 0, None, 0, None))(
             imass, iteff_p, ilogg_p, ilum, imet_p, imf_val
         )
         ssp_std = jnp.std(specs, axis=0)
@@ -246,9 +244,7 @@ class IntegratedSynthesizer(PopulationIngredients):
         imf_params = imf_params or {}
 
         response = (
-            filter_response
-            if filter_response is not None
-            else self.filter_response
+            filter_response if filter_response is not None else self.filter_response
         )
 
         stellar_mass = self.stellar_mass(age, met, imf_params)
@@ -316,12 +312,8 @@ class IntegratedSynthesizer(PopulationIngredients):
             List of IMF parameter dictionaries used in the grid.
         """
 
-        age_range = jnp.array(
-            age_range if age_range is not None else self.iso_ages
-        )
-        met_range = jnp.array(
-            met_range if met_range is not None else self.iso_mets
-        )
+        age_range = jnp.array(age_range if age_range is not None else self.iso_ages)
+        met_range = jnp.array(met_range if met_range is not None else self.iso_mets)
         imf_range = imf_range if imf_range is not None else [{}]
 
         # Validate ranges

@@ -1,17 +1,19 @@
-import pytest
+# -*- coding: utf-8 -*-
 import jax.numpy as jnp
-from fastar.integrated_ssp import IntegratedSynthesizer
+import pytest
+
+from fastar import IntegratedSSPSynthesizer
 
 
 @pytest.mark.unit
 @pytest.mark.synthesis
-class TestIntegratedSynthesizer:
+class TestIntegratedSSPSynthesizer:
     """Test suite for IntegratedSynthesizer."""
 
     @pytest.fixture
     def synthesizer(self):
         """Create an IntegratedSynthesizer instance."""
-        return IntegratedSynthesizer()
+        return IntegratedSSPSynthesizer()
 
     def test_synthesizer_initialization(self, synthesizer):
         """Test that IntegratedSynthesizer initializes correctly."""
@@ -29,9 +31,7 @@ class TestIntegratedSynthesizer:
         result = synthesizer.synthesize(age, met, imf_params)
 
         assert isinstance(result, tuple), 'Synthesize should return a tuple'
-        assert len(result) == 2, (
-            'Synthesize should return (wavelength, spectrum)'
-        )
+        assert len(result) == 2, 'Synthesize should return (wavelength, spectrum)'
 
     def test_synthesize_finite_output(self, synthesizer):
         """Test that synthesize returns finite values."""
