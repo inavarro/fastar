@@ -3,7 +3,7 @@
 from ._version import *  # noqa: F403
 from .synthesis.ssp.integrated import IntegratedSSPSynthesizer
 from .synthesis.ssp.semiresolved import SemiresolvedSSPSynthesizer
-from .synthesis.stellar_predictions import StellarSynthesizer
+from .synthesis.stellar import StellarSynthesizer
 
 __all__ = [
     'IntegratedSSPSynthesizer',

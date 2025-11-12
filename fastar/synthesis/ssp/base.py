@@ -9,7 +9,7 @@ import numpy
 from astropy.io.ascii import read as ascii_read
 from jax.scipy.integrate import trapezoid
 
-from ..stellar_predictions import StellarSynthesizer
+from ..stellar import StellarSynthesizer
 from fastar.imf import single_power_law as unimodal
 from fastar.interpolate.isochrone import isochrone_interpolation
 from fastar.tools.assets import get_asset_path
