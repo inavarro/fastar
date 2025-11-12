@@ -1,5 +1,5 @@
 .DEFAULT_GOAL := install
-.PHONY: help print-env install install-dev tests test_import release clean format lint apidoc clean-apidoc docs docs-html clean-docs
+.PHONY: help print-env install install-dev tests test_import release clean format lint docs docs-html clean-docs
 
 define PROJECT_HELP_MSG
 
@@ -75,19 +75,23 @@ format:
 lint:
 	uv run ruff check fastar
 
-apidoc: clean-apidoc
-	uv run sphinx-apidoc -H "Reference / API" -M -o docs/api/ fastar/
+docs: clean-docs docs-html docs-pdf
 
-clean-apidoc:
-	rm -rf docs/api/
+docs-html: clean-html
+	uv run --with jupyter sphinx-build -W --keep-going -b html docs/ _build/
 
-docs: clean-docs docs-html
+docs-pdf: clean-pdf
+	uv run --with jupyter sphinx-build -W --keep-going -b latex docs/ _build_pdf/
+	make -C _build_pdf/
 
-docs-html: apidoc
-	uv run sphinx-build -W --keep-going -b html docs/ _build/
-
-clean-docs: clean-apidoc
+clean-html:
 	rm -rf _build/
+
+clean-pdf:
+	rm -rf _build_pdf/
+
+clean-docs: clean-html clean-pdf
+	rm -rf docs/_autoapi
 
 envclean:
 	rm -r .venv

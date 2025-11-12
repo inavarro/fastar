@@ -1,11 +1,10 @@
+# -*- coding: utf-8 -*-
 # Configuration file for the Sphinx documentation builder.
 #
 # This file only contains a selection of the most common options. For a full
 # list see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
-
 # -- Path setup --------------------------------------------------------------
-
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
@@ -13,7 +12,6 @@
 # import os
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
-
 from importlib.metadata import version as importlib_metadata_version
 
 
@@ -47,13 +45,16 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.napoleon',
     'sphinx.ext.autosummary',
+    'nbsphinx',
 ]
+
+nbsphinx_execute = 'always'
 
 autosummary_generate = True
 autodoc_default_options = {
-    "members": True,
-    "undoc-members": False,
-    "show-inheritance": True,
+    'members': True,
+    'undoc-members': False,
+    'show-inheritance': True,
 }
 
 napoleon_use_param = True
@@ -61,12 +62,12 @@ napoleon_use_rtype = True
 
 # Theme options
 html_theme_options = {
-    "show_navbar_depth": 1,        # how deep headers appear in the sidebar
-    "show_toc_level": 1,           # how deep the right-hand “On this page” toc goes
-    "logo": {
-      "image_light": "_static/fastar_logo.png",
-      "image_dark": "_static/fastar_logo_dark.png",
-   }
+    'show_navbar_depth': 1,  # how deep headers appear in the sidebar
+    'show_toc_level': 1,  # how deep the right-hand “On this page” toc goes
+    'logo': {
+        'image_light': '_static/fastar_logo.png',
+        'image_dark': '_static/fastar_logo_dark.png',
+    },
 }
 
 # HTML logo and favicon
@@ -93,7 +94,7 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = "sphinx_book_theme"
+html_theme = 'sphinx_book_theme'
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,

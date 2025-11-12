@@ -21,4 +21,4 @@ This documentation briefly describes the synthesis of SSP models using FASTAR as
    :caption: Tutorials
    :hidden:
 
-   examples
+   examples/index
