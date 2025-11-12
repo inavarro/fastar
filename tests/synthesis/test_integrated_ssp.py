@@ -2,18 +2,18 @@
 import jax.numpy as jnp
 import pytest
 
-from fastar import IntegratedSynthesizer
+from fastar import IntegratedSSPSynthesizer
 
 
 @pytest.mark.unit
 @pytest.mark.synthesis
-class TestIntegratedSynthesizer:
+class TestIntegratedSSPSynthesizer:
     """Test suite for IntegratedSynthesizer."""
 
     @pytest.fixture
     def synthesizer(self):
         """Create an IntegratedSynthesizer instance."""
-        return IntegratedSynthesizer()
+        return IntegratedSSPSynthesizer()
 
     def test_synthesizer_initialization(self, synthesizer):
         """Test that IntegratedSynthesizer initializes correctly."""

@@ -10,11 +10,11 @@ import jax.random as jr
 import numpy as np
 from jax.scipy.integrate import trapezoid
 
-from .base import PopulationIngredients
+from .base import BaseSSPSynthesizer
 from fastar.interpolate.color import color_interpolation
 
 
-class IntegratedSynthesizer(PopulationIngredients):
+class IntegratedSSPSynthesizer(BaseSSPSynthesizer):
     """
     Class for generating synthetic integrated SSP spectroscopic and photometric
     predictions with a PCA-based stellar spectral model.

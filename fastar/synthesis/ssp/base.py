@@ -15,7 +15,7 @@ from fastar.interpolate.isochrone import isochrone_interpolation
 from fastar.tools.assets import get_asset_path
 
 
-class PopulationIngredients(StellarSynthesizer):
+class BaseSSPSynthesizer(StellarSynthesizer):
     """
     Synthesizer for Simple Stellar Populations (SSPs).
     """

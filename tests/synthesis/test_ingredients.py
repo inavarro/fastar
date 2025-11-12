@@ -2,17 +2,17 @@
 import jax.numpy as jnp
 import pytest
 
-from fastar.synthesis.ssp.base import PopulationIngredients
+from fastar.synthesis.ssp.base import BaseSSPSynthesizer
 
 
 @pytest.mark.unit
-class TestPopulationIngredients:
+class TestBaseSSPSynthesizer:
     """Test suite for PopulationIngredients."""
 
     @pytest.fixture
     def pop_ingredients(self):
         """Create a PopulationIngredients instance."""
-        return PopulationIngredients()
+        return BaseSSPSynthesizer()
 
     def test_initialization(self, pop_ingredients):
         """Test that PopulationIngredients initializes correctly."""

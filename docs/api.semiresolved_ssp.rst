@@ -5,4 +5,4 @@ Semiresolved SSP synthesis
    :toctree: _autoapi
    :recursive:
 
-   fastar.SemiresolvedSynthesizer
+   fastar.SemiresolvedSSPSynthesizer

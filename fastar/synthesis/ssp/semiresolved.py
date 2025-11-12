@@ -7,11 +7,11 @@ import jax.numpy as jnp
 from jax import lax
 from jax.scipy.integrate import trapezoid
 
-from .base import PopulationIngredients
+from .base import BaseSSPSynthesizer
 from fastar.interpolate.color import color_interpolation
 
 
-class SemiresolvedSynthesizer(PopulationIngredients):
+class SemiresolvedSSPSynthesizer(BaseSSPSynthesizer):
     """
     Class for generating synthetic semi-resolved stellar populations
     spectroscopic and photometric predictions with a PCA-based stellar spectral

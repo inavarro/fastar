@@ -3,18 +3,18 @@ import jax.numpy as jnp
 import jax.random as jr
 import pytest
 
-from fastar import SemiresolvedSynthesizer
+from fastar import SemiresolvedSSPSynthesizer
 
 
 @pytest.mark.unit
 @pytest.mark.synthesis
-class TestSemiresolvedSynthesizer:
+class TestSemiresolvedSSPSynthesizer:
     """Test suite for SemiresolvedSynthesizer."""
 
     @pytest.fixture
     def synthesizer(self):
         """Create a SemiresolvedSynthesizer instance."""
-        return SemiresolvedSynthesizer()
+        return SemiresolvedSSPSynthesizer()
 
     @pytest.fixture
     def prng_key(self):
