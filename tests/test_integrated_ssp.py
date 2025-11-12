@@ -1,6 +1,8 @@
-import pytest
+# -*- coding: utf-8 -*-
 import jax.numpy as jnp
-from fastar.integrated_ssp import IntegratedSynthesizer
+import pytest
+
+from fastar import IntegratedSynthesizer
 
 
 @pytest.mark.unit
@@ -29,9 +31,7 @@ class TestIntegratedSynthesizer:
         result = synthesizer.synthesize(age, met, imf_params)
 
         assert isinstance(result, tuple), 'Synthesize should return a tuple'
-        assert len(result) == 2, (
-            'Synthesize should return (wavelength, spectrum)'
-        )
+        assert len(result) == 2, 'Synthesize should return (wavelength, spectrum)'
 
     def test_synthesize_finite_output(self, synthesizer):
         """Test that synthesize returns finite values."""

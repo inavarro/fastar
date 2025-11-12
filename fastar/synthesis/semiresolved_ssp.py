@@ -7,7 +7,7 @@ import jax.numpy as jnp
 from jax import lax
 from jax.scipy.integrate import trapezoid
 
-from fastar.core.ingredients import PopulationIngredients
+from .base_ssp import PopulationIngredients
 from fastar.interpolate.color import color_interpolation
 
 
@@ -19,9 +19,7 @@ class SemiresolvedSynthesizer(PopulationIngredients):
     """
 
     @partial(jax.jit, static_argnames=['self', 'num_stars', 'out_masses'])
-    def synthesize(
-        self, age, met, num_stars, key, imf_params=None, out_masses=False
-    ):
+    def synthesize(self, age, met, num_stars, key, imf_params=None, out_masses=False):
         """
         Generate synthetic semi-resolved population spectrum for a given
         age and metallicity.
@@ -129,9 +127,7 @@ class SemiresolvedSynthesizer(PopulationIngredients):
         return jnp.interp(uniform_samples, cdf, mass_grid)
 
     @partial(jax.jit, static_argnames=['self'])
-    def _synthesize_massgiven(
-        self, met, imass, iteff, ilogg, ilum, sampled_masses
-    ):
+    def _synthesize_massgiven(self, met, imass, iteff, ilogg, ilum, sampled_masses):
         """
         Generate the integrated spectrum of a stellar population using a
         pre-sampled set of stellar masses and isochrone quantities.
@@ -237,9 +233,7 @@ class SemiresolvedSynthesizer(PopulationIngredients):
             )
             return spec_accum + rem_spec
 
-        spec_total = lax.cond(
-            remainder > 0, add_remainder, lambda x: x, spec_total
-        )
+        spec_total = lax.cond(remainder > 0, add_remainder, lambda x: x, spec_total)
 
         if out_masses:
             return self.wave, spec_total, sampled_masses

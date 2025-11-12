@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
 from functools import partial
 
-import h5py
 import flax.serialization as flax_ser
+import h5py
 import jax
 import jax.numpy as jnp
 
@@ -33,9 +32,7 @@ class StellarSynthesizer:
         """
         Load trained PCA regressor, scalers, and PCA components.
         """
-        model = PCARegressor(
-            output_dim=self.npc, activation_type=self.activation_type
-        )
+        model = PCARegressor(output_dim=self.npc, activation_type=self.activation_type)
 
         with open(
             get_asset_path(f'pca_regressor{self.rlabel}.flax'),

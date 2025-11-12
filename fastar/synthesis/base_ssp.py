@@ -1,16 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
 from functools import partial
 
 import h5py
-import numpy
 import jax
 import jax.numpy as jnp
-from jax.scipy.integrate import trapezoid
+import numpy
 from astropy.io.ascii import read as ascii_read
+from jax.scipy.integrate import trapezoid
 
-from fastar.core.stellar_predictions import StellarSynthesizer
+from .stellar_predictions import StellarSynthesizer
 from fastar.imf import single_power_law as unimodal
 from fastar.interpolate.isochrone import isochrone_interpolation
 from fastar.tools.assets import get_asset_path
@@ -30,9 +29,7 @@ class PopulationIngredients(StellarSynthesizer):
             with h5py.File(get_asset_path('sun_ref.hdf5'), 'r') as sun:
                 self.sun_spec = sun['sun_phot'][:]
 
-        self.imf_function = (
-            imf_function if imf_function is not None else unimodal
-        )
+        self.imf_function = imf_function if imf_function is not None else unimodal
 
         super().__init__(model_label=model_label)
 
@@ -49,9 +46,7 @@ class PopulationIngredients(StellarSynthesizer):
         and optimized age and metallicity samplings.
         """
 
-        with h5py.File(
-            get_asset_path('BASTI-IAC_isochrones.hdf5'), 'r'
-        ) as iso:
+        with h5py.File(get_asset_path('BASTI-IAC_isochrones.hdf5'), 'r') as iso:
             self.mets = iso['mets'][:]
             self.ages = iso['ages'][:]
             self.mass_ini_data = iso['mass_ini'][:]
@@ -62,9 +57,7 @@ class PopulationIngredients(StellarSynthesizer):
         tab = ascii_read(get_asset_path('filters_default.res'))
         fwave = numpy.array(tab['col1'])
         fresp = numpy.array(tab['col2'])
-        self.filter_response = jnp.interp(
-            self.wave, fwave, fresp, left=0, right=0
-        )
+        self.filter_response = jnp.interp(self.wave, fwave, fresp, left=0, right=0)
 
         with h5py.File(get_asset_path('WORTHEY11_colors.hdf5'), 'r') as color:
             self.bcv_grid = color['bcv'][:]
@@ -112,15 +105,11 @@ class PopulationIngredients(StellarSynthesizer):
         """
 
         response = (
-            filter_response
-            if filter_response is not None
-            else self.filter_response
+            filter_response if filter_response is not None else self.filter_response
         )
 
         # Compute AB magnitudes from synthetic spectra
         denominator = trapezoid(response / self.wave, x=self.wave)
-        numerators = trapezoid(
-            spectra * response * self.wave, x=self.wave, axis=1
-        )
+        numerators = trapezoid(spectra * response * self.wave, x=self.wave, axis=1)
         flux_density = numerators / denominator
         return -2.5 * jnp.log10(flux_density) - 2.406

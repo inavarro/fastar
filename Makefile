@@ -84,13 +84,13 @@ docs-pdf: clean-pdf
 	uv run --with jupyter sphinx-build -W --keep-going -b latex docs/ _build_pdf/
 	make -C _build_pdf/
 
-clean-html:
+clean-html: clean-docs
 	rm -rf _build/
 
-clean-pdf:
+clean-pdf: clean-docs
 	rm -rf _build_pdf/
 
-clean-docs: clean-html clean-pdf
+clean-docs:
 	rm -rf docs/_autoapi
 
 envclean:

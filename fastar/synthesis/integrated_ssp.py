@@ -10,7 +10,7 @@ import jax.random as jr
 import numpy as np
 from jax.scipy.integrate import trapezoid
 
-from fastar.core.ingredients import PopulationIngredients
+from .base_ssp import PopulationIngredients
 from fastar.interpolate.color import color_interpolation
 
 
@@ -83,9 +83,7 @@ class IntegratedSynthesizer(PopulationIngredients):
         corr = 1 / jnp.power(10.0, (magnitudes - mtarg) / -2.5)
 
         # Integrate corrected spectra over IMF-weighted stars
-        spec = self._population_synthesis_integrate(
-            spectra, corr, imf_val, imass
-        )
+        spec = self._population_synthesis_integrate(spectra, corr, imf_val, imass)
 
         return spec
 
@@ -246,9 +244,7 @@ class IntegratedSynthesizer(PopulationIngredients):
         imf_params = imf_params or {}
 
         response = (
-            filter_response
-            if filter_response is not None
-            else self.filter_response
+            filter_response if filter_response is not None else self.filter_response
         )
 
         stellar_mass = self.stellar_mass(age, met, imf_params)
@@ -316,12 +312,8 @@ class IntegratedSynthesizer(PopulationIngredients):
             List of IMF parameter dictionaries used in the grid.
         """
 
-        age_range = jnp.array(
-            age_range if age_range is not None else self.iso_ages
-        )
-        met_range = jnp.array(
-            met_range if met_range is not None else self.iso_mets
-        )
+        age_range = jnp.array(age_range if age_range is not None else self.iso_ages)
+        met_range = jnp.array(met_range if met_range is not None else self.iso_mets)
         imf_range = imf_range if imf_range is not None else [{}]
 
         # Validate ranges

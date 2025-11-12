@@ -5,7 +5,7 @@ Other modules
    :toctree: _autoapi
    :recursive:
 
-   fastar.core
+   fastar.synthesis.base_ssp
    fastar.imf
    fastar.interpolate
    fastar.nn
