@@ -83,9 +83,9 @@ fork and only when your development is finished you can proceed to do a PR.
 ## Quick Start
 
 ```python
-from fastar.integrated_ssp import IntegratedSynthesizer
+from fastar import IntegratedSSPSynthesizer
 from fastar.imf import kroupa
 
-ssp = IntegratedSynthesizer(imf_function=kroupa)
+ssp = IntegratedSSPSynthesizer(imf_function=kroupa)
 wave, flux = ssp.synthesize(age=10.0, met=0.0)
 ```
