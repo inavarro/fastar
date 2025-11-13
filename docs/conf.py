@@ -29,8 +29,6 @@ release = importlib_metadata_version('fastar')
 # version = '.'.join(release.split('.')[:2])
 version = release
 
-autodoc_mock_imports = ["fastar._version"]
-
 # -- General configuration ---------------------------------------------------
 
 # Add any Sphinx extension module names here, as strings. They can be
@@ -120,4 +118,3 @@ todo_include_todos = True
 
 napoleon_google_docstring = False
 napoleon_numpy_docstring = True
-
