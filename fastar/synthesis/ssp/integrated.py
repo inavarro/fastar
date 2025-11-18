@@ -36,8 +36,8 @@ class IntegratedSSPSynthesizer(BaseSSPSynthesizer):
 
         Returns
         -------
-        tuple
-            Wavelength grid and synthesized spectrum.
+        array
+            Synthesized spectrum.
         """
         # ensure we always pass a dict to IMF **params
         imf_params = imf_params or {}
@@ -54,7 +54,7 @@ class IntegratedSSPSynthesizer(BaseSSPSynthesizer):
         # Evaluate the SSP
         spec = self._wrapper(imass, iteff, ilogg, ilum, imet, imf_val)
 
-        return self.wave, spec
+        return spec
 
     @partial(jax.jit, static_argnames=['self'])
     def _wrapper(self, imass, iteff, ilogg, ilum, imet, imf_val):
@@ -122,7 +122,7 @@ class IntegratedSSPSynthesizer(BaseSSPSynthesizer):
             imass, iteff_p, ilogg_p, ilum, imet_p, imf_val
         )
         ssp_std = jnp.std(specs, axis=0)
-        return self.wave, ssp_std
+        return ssp_std
 
     @partial(jax.jit, static_argnames=['self', 'nsim'])
     def synthesize_nsim_systematic(
@@ -140,7 +140,7 @@ class IntegratedSSPSynthesizer(BaseSSPSynthesizer):
         Estimate SSP spectral uncertainties via Monte Carlo perturbation
         of the stellar parameters. In contrast to `synthesize_nsim`, this
         systematically shifts parameters of all stars in the SSP by the same
-        amount. Returns (wave, std_spectrum).
+        amount. Returns std_spectrum.
         """
 
         imf_params = imf_params or {}
@@ -166,7 +166,7 @@ class IntegratedSSPSynthesizer(BaseSSPSynthesizer):
             imass, iteff_p, ilogg_p, ilum, imet_p, imf_val
         )
         ssp_std = jnp.std(specs, axis=0)
-        return self.wave, ssp_std
+        return ssp_std
 
     @partial(jax.jit, static_argnames=['self'])
     def _population_synthesis_integrate(self, spectra, corr, imf_val, imass):
@@ -248,7 +248,7 @@ class IntegratedSSPSynthesizer(BaseSSPSynthesizer):
         )
 
         stellar_mass = self.stellar_mass(age, met, imf_params)
-        _, spectrum = self.synthesize(age, met, imf_params)
+        spectrum = self.synthesize(age, met, imf_params)
 
         if solar_mag is None:
             m_sun = self._compute_ab_magnitudes(
@@ -380,7 +380,7 @@ class IntegratedSSPSynthesizer(BaseSSPSynthesizer):
         for ia, age in enumerate(age_range):
             for im, met in enumerate(met_range):
                 for ii, imf_params in enumerate(imf_range):
-                    _, spec = self.synthesize(age, met, imf_params)
+                    spec = self.synthesize(age, met, imf_params)
                     spec_grid = spec_grid.at[ia, im, ii, :].set(spec)
 
         # Save

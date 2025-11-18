@@ -37,7 +37,7 @@ class TestSemiresolvedSSPSynthesizer:
         result = synthesizer.synthesize(age, met, small_num_stars, prng_key, imf_params)
 
         assert isinstance(result, tuple), 'Synthesize should return a tuple'
-        assert len(result) == 3, 'Synthesize should return (wavelength, spectrum, mass)'
+        assert len(result) == 2, 'Synthesize should return (spectrum, mass)'
 
     def test_synthesize_finite_output(self, synthesizer, prng_key, small_num_stars):
         """Test that synthesize returns finite values."""
@@ -45,11 +45,10 @@ class TestSemiresolvedSSPSynthesizer:
         met = -0.5
         imf_params = {'m_min': 0.1, 'm_max': 100.0, 'alpha': 2.35}
 
-        wave, spectrum, mass = synthesizer.synthesize(
+        spectrum, mass = synthesizer.synthesize(
             age, met, small_num_stars, prng_key, imf_params
         )
 
-        assert jnp.all(jnp.isfinite(wave)), 'Wavelength should be finite'
         assert jnp.all(jnp.isfinite(spectrum)), 'Spectrum should be finite'
         assert jnp.isfinite(mass), 'Total mass should be finite'
 
@@ -59,7 +58,7 @@ class TestSemiresolvedSSPSynthesizer:
         met = 0.0
         imf_params = {'m_min': 0.1, 'm_max': 100.0, 'alpha': 2.35}
 
-        wave, spectrum, mass = synthesizer.synthesize(
+        spectrum, mass = synthesizer.synthesize(
             age, met, small_num_stars, prng_key, imf_params
         )
 
@@ -71,7 +70,7 @@ class TestSemiresolvedSSPSynthesizer:
         met = 0.0
         imf_params = {'m_min': 0.1, 'm_max': 100.0, 'alpha': 2.35}
 
-        wave, spectrum, mass = synthesizer.synthesize(
+        spectrum, mass = synthesizer.synthesize(
             age, met, small_num_stars, prng_key, imf_params
         )
 
@@ -86,10 +85,10 @@ class TestSemiresolvedSSPSynthesizer:
         key1 = jr.PRNGKey(42)
         key2 = jr.PRNGKey(123)
 
-        wave1, spectrum1, mass1 = synthesizer.synthesize(
+        spectrum1, mass1 = synthesizer.synthesize(
             age, met, small_num_stars, key1, imf_params
         )
-        wave2, spectrum2, mass2 = synthesizer.synthesize(
+        spectrum2, mass2 = synthesizer.synthesize(
             age, met, small_num_stars, key2, imf_params
         )
 
@@ -105,7 +104,7 @@ class TestSemiresolvedSSPSynthesizer:
         met = 0.0
         imf_params = {'m_min': 0.1, 'm_max': 100.0, 'alpha': 2.35}
 
-        wave, spectrum, masses = synthesizer.synthesize(
+        spectrum, masses = synthesizer.synthesize(
             age, met, small_num_stars, prng_key, imf_params, out_masses=True
         )
 

@@ -43,8 +43,8 @@ class SemiresolvedSSPSynthesizer(BaseSSPSynthesizer):
         Returns
         -------
         tuple
-            (wavelengths, spectrum, total stellar mass) or (wavelengths,
-            spectrum, sampled stellar masses) depending on `out_masses`.
+            (spectrum, total stellar mass) or (spectrum, sampled stellar
+            masses) depending on `out_masses`.
         """
         # ensure we always pass a dict to IMF **params
         imf_params = imf_params or {}
@@ -95,9 +95,9 @@ class SemiresolvedSSPSynthesizer(BaseSSPSynthesizer):
         # The function returns wavelength, spectrum and either the total
         # stellar mass of the population or the sampled
         if out_masses:
-            result = (self.wave, spec, sampled_masses)
+            result = (spec, sampled_masses)
         else:
-            result = (self.wave, spec, jnp.sum(sampled_masses))
+            result = (spec, jnp.sum(sampled_masses))
 
         return result
 
