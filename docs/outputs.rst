@@ -11,15 +11,15 @@ The spectroscopic synthesis is the default FASTAR synthesis. To select the FASTA
 
 .. code-block:: python
 
-    from fastar.integrated_ssp import IntegratedSynthesizer
+    from fastar import IntegratedSSPSynthesizer
 
     # Spectroscopic predictions (default)
-    ssp_spec = IntegratedSynthesizer()
-    wave_spec, model_spec = ssp_spec.synthesize(age=10, met=0)
+    ssp_spec = IntegratedSSPSynthesizer()
+    model_spec = ssp_spec.synthesize(age=10, met=0)
 
     # Photometric predictions
-    ssp_phot = IntegratedSynthesizer(model_label="phot")
-    wave_phot, model_phot = ssp_phot.synthesize(age=10, met=0)
+    ssp_phot = IntegratedSSPSynthesizer(model_label="phot")
+    model_phot = ssp_phot.synthesize(age=10, met=0)
 
 
 Integral FASTAR models (standard SSP)
@@ -31,11 +31,11 @@ The easiest way of using FASTAR is to generate a single SSP model. This is done 
 
 .. code-block:: python
 
-    from fastar.integrated_ssp import IntegratedSynthesizer
+    from fastar import IntegratedSSPSynthesizer
     from fastar.imf import kroupa
 
-    ssp = IntegratedSynthesizer(imf_function=kroupa)
-    wave, model = ssp.synthesize(age=10, met=0)
+    ssp = IntegratedSSPSynthesizer(imf_function=kroupa)
+    model = ssp.synthesize(age=10, met=0)
 
 
 **Mass-to-light ratios**
@@ -44,10 +44,10 @@ FASTAR can predict mass-to-light in any photometric band. Note that the filter r
 
 .. code-block:: python
 
-    from fastar.integrated_ssp import IntegratedSynthesizer
+    from fastar import IntegratedSSPSynthesizer
     from fastar.imf import kroupa
 
-    ssp = IntegratedSynthesizer(imf_function=kroupa)
+    ssp = IntegratedSSPSynthesizer(imf_function=kroupa)
     mass_to_light = ssp.mass_to_light_ratio(age=10, met=0, filter_response=filter_response)
 
 .. important::
@@ -55,8 +55,8 @@ FASTAR can predict mass-to-light in any photometric band. Note that the filter r
    The retrieved variable ``mass_to_light`` is a dictionary containing two
    mass-to-light ratios:
 
-   * ``mass_to_light["ml_stars"]``: pure stellar mass-to-light ratio (stellar light divided by stellar mass).
-   * ``mass_to_light["ml_total"]``: total mass-to-light ratio including  th mass in stars, remnants, and gas ejected during stellar evolution.
+   * ``mass_to_light["stars"]``: pure stellar mass-to-light ratio (stellar light divided by stellar mass).
+   * ``mass_to_light["total"]``: total mass-to-light ratio including  th mass in stars, remnants, and gas ejected during stellar evolution.
 
 **Model grids**
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -65,11 +65,11 @@ Although one of the biggest advantages of FASTAR is that it is able to generate 
 
 .. code-block:: python
 
-    from fastar.integrated_ssp import IntegratedSynthesizer
+    from fastar import IntegratedSSPSynthesizer
     from fastar.imf import kroupa
 
-    ssp = IntegratedSynthesizer(imf_function=kroupa)
-    model_grid = load_precomputed_models(age_range, met_range, imf_range)
+    ssp = IntegratedSSPSynthesizer(imf_function=kroupa)
+    model_grid = ssp.load_precomputed_models(age_range, met_range, imf_range)
 
 .. tip::
 
@@ -85,11 +85,11 @@ The synthesis of semi-resolved models follows the same principles and philosophy
 
 .. code-block:: python
 
-    from fastar.semiresolved_ssp import SemiresolvedSynthesizer
+    from fastar import SemiresolvedSSPSynthesizer
     from fastar.imf import kroupa
 
-    ssp = SemiresolvedSynthesizer(imf_function=kroupa)
-    wave, model = ssp.synthesize(age=10, met=0, num_stars=1e3, key=key)
+    ssp = SemiresolvedSSPSynthesizer(imf_function=kroupa)
+    model = ssp.synthesize(age=10, met=0, num_stars=100, key=key)
 
 
 Line-strengths, magnitudes and colors
@@ -106,7 +106,7 @@ Line-strength indices can be directly computed from the predicted FASTAR spectra
 
     from fastar.tools.utils import compute_linetrength
 
-    line_strength = compute_linetrength(wave, model, index_name, index_table)
+    line_strength = compute_linetrength(ssp.wave, model, index_name, index_table)
 
 
 **Magnitudes and colors**
@@ -118,7 +118,7 @@ Given a filter response evaluated at the same wavelength as the FASTAR models, t
 
     from fastar.tools.utils import compute_ab_magnitudes
 
-    ab_mag = compute_ab_magnitudes(wave, model, filter_response)
+    ab_mag = compute_ab_magnitudes(ssp.wave, model, filter_response)
 
 
 with a color being simply the difference between two filters
@@ -127,7 +127,7 @@ with a color being simply the difference between two filters
 
     from fastar.tools.utils import compute_ab_magnitudes
 
-    ab_mag_1 = compute_ab_magnitudes(wave, model, filter_response_1)
-    ab_mag_2 = compute_ab_magnitudes(wave, model, filter_response_2)
+    ab_mag_1 = compute_ab_magnitudes(ssp.wave, model, filter_response_1)
+    ab_mag_2 = compute_ab_magnitudes(ssp.wave, model, filter_response_2)
 
     color = ab_mag_1 - ab_mag_2
