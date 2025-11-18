@@ -233,9 +233,9 @@ class IntegratedSSPSynthesizer(BaseSSPSynthesizer):
         -------
         dict
             Dictionary containing:
-               - "ml_stars" : float
+               - "stars" : float
                  Stellar mass-to-light ratio (M*/L) in solar units.
-               - "ml_total" : float
+               - "total" : float
                  Total mass-to-light ratio (M_total/L), assuming total mass = 1
                  solar mass.
         """
@@ -264,8 +264,8 @@ class IntegratedSSPSynthesizer(BaseSSPSynthesizer):
         luminosity = 10 ** (-0.4 * (ab_mag - m_sun))
 
         return {
-            'ml_stars': stellar_mass / luminosity,  # M*/L
-            'ml_total': 1.0 / luminosity,  # M_total/L
+            'stars': stellar_mass / luminosity,  # M*/L
+            'total': 1.0 / luminosity,  # M_total/L
         }
 
     def load_precomputed_models(
