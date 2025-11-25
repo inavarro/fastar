@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
 """
 Registry for Initial Mass Functions (IMFs).
 Provides centralized access to all available IMF parametrizations.
 """
 
-from fastar.imf.named_imf.single_power_law import single_power_law
+from fastar.imf.named_imf.bimodal import bimodal
 from fastar.imf.named_imf.broken_power_law import broken_power_law
-from fastar.imf.named_imf.kroupa import kroupa
 from fastar.imf.named_imf.chabrier import chabrier
 from fastar.imf.named_imf.flexi import flexi
+from fastar.imf.named_imf.kroupa import kroupa
+from fastar.imf.named_imf.single_power_law import single_power_law
 
 
 class IMFRegistry:
@@ -50,6 +50,7 @@ class IMFRegistry:
             'kroupa': kroupa,
             'chabrier': chabrier,
             'flexi': flexi,
+            'bimodal': bimodal,
         }
 
     def load_by_name(self, name):
@@ -65,6 +66,7 @@ class IMFRegistry:
             - 'kroupa'
             - 'chabrier'
             - 'flexi'
+            - 'bimodal'
 
         Returns
         -------
@@ -81,8 +83,7 @@ class IMFRegistry:
         if name_lower not in self._registry:
             available = sorted(set(self._registry.keys()))
             raise ValueError(
-                f"IMF '{name}' not in registry. "
-                f'Available IMFs: {", ".join(available)}'
+                f"IMF '{name}' not in registry. Available IMFs: {', '.join(available)}"
             )
 
         return self._registry[name_lower]
