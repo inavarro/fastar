@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
 # pylint: disable=duplicate-code
 # *** Duplicate code will be addressed in future IMF refactoring ***
-
 """
 Broken power-law
 """
@@ -13,11 +11,23 @@ import jax.scipy.integrate as jsp_integrate
 
 
 def broken_power_law_raw(
-    mass, m_min=0.1, m_max=100.0, m_break=0.5, alpha1=1.3, alpha2=2.3
+    mass,
+    m_min=0.1,
+    m_max=100.0,
+    m_break1=0.5,
+    m_break2=1.0,
+    alpha1=1.3,
+    alpha2=2.3,
+    alpha3=2.3,
 ):
     """
     Returns the normalized broken power-law IMF evaluated at `mass`,
     fully JAX-compatible with numerical normalization.
+
+    Behavior:
+        m < m_break1            -> m^alpha1
+        m_break1 ≤ m < m_break2 -> m^alpha2
+        m ≥ m_break2            -> m^alpha3
 
     Parameters
     ----------
@@ -27,12 +37,10 @@ def broken_power_law_raw(
         Lower mass limit. Default is 0.1.
     m_max : float, optional
         Upper mass limit. Default is 100.0.
-    m_break : float, optional
-        Break point mass. Default is 0.5.
-    alpha1 : float, optional
-        Slope for m < m_break. Default is 1.3.
-    alpha2 : float, optional
-        Slope for m >= m_break. Default is 2.3.
+    m_break1, m_break2 : float
+        Break masses (must satisfy m_min < m_break1 < m_break2 < m_max).
+    alpha1, alpha2, alpha3 : float
+        Slopes of the three segments.
 
     Returns
     -------
@@ -41,11 +49,23 @@ def broken_power_law_raw(
     """
     mass = jnp.atleast_1d(mass)
 
-    def imf_piecewise(mass_value):
+    def imf_piecewise(m):
+        # Coefficients to ensure continuity
+        seg1 = m ** (-alpha1)
+
+        # Middle segment: A * m_break1^(alpha2-alpha1) * m^(-alpha2)
+        coeff2 = m_break1 ** (alpha2 - alpha1)
+        seg2 = coeff2 * m ** (-alpha2)
+
+        # High-mass segment:
+        # A * m_break1^(alpha2-alpha1) * m_break2^(alpha3-alpha2) * m^(-alpha3)
+        coeff3 = coeff2 * (m_break2 ** (alpha3 - alpha2))
+        seg3 = coeff3 * m ** (-alpha3)
+
         return jnp.where(
-            mass_value < m_break,
-            mass_value ** (-alpha1),
-            (m_break ** (alpha2 - alpha1)) * mass_value ** (-alpha2),
+            m < m_break1,
+            seg1,
+            jnp.where(m < m_break2, seg2, seg3),
         )
 
     m_vals = jnp.linspace(m_min, m_max, 5000)
