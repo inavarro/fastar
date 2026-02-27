@@ -17,7 +17,7 @@ def broken_power_law_raw(
     m_break1=0.5,
     m_break2=1.0,
     alpha1=1.3,
-    alpha2=2.3,
+    alpha2=1.8,
     alpha3=2.3,
 ):
     """
