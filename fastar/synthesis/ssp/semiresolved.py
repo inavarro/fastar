@@ -236,6 +236,6 @@ class SemiresolvedSSPSynthesizer(BaseSSPSynthesizer):
         spec_total = lax.cond(remainder > 0, add_remainder, lambda x: x, spec_total)
 
         if out_masses:
-            return self.wave, spec_total, sampled_masses
+            return spec_total, sampled_masses
         else:
-            return self.wave, spec_total, jnp.sum(sampled_masses)
+            return spec_total, jnp.sum(sampled_masses)
