@@ -12,6 +12,7 @@ easy access. Users can:
 
 from fastar.imf.named_imf.single_power_law import single_power_law
 from fastar.imf.named_imf.broken_power_law import broken_power_law
+from fastar.imf.named_imf.bimodal import bimodal
 from fastar.imf.named_imf.kroupa import kroupa
 from fastar.imf.named_imf.chabrier import chabrier
 from fastar.imf.named_imf.flexi import flexi
@@ -25,6 +26,7 @@ __all__ = [
     # IMF functions
     'single_power_law',
     'broken_power_law',
+    'bimodal',
     'kroupa',
     'chabrier',
     'flexi',
