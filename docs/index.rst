@@ -18,7 +18,7 @@ This documentation briefly describes the synthesis of SSP models using FASTAR as
 
 .. toctree::
    :maxdepth: 1
-   :caption: Tutorials
+   :caption: Examples
    :hidden:
 
    examples/index

@@ -104,9 +104,9 @@ Line-strength indices can be directly computed from the predicted FASTAR spectra
 
 .. code-block:: python
 
-    from fastar.tools.utils import compute_linetrength
+    from fastar.tools.utils import compute_linestrengths
 
-    line_strength = compute_linetrength(ssp.wave, model, index_name, index_table)
+    line_strength = compute_linestrengths(ssp.wave, model, index_name, index_table)
 
 
 **Magnitudes and colors**

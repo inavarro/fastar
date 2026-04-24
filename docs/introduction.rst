@@ -39,16 +39,16 @@ Semi-resolved vs fully-sampled models
 Traditional SSP models are calculated assuming an *infinitely* large collection of stars. Under this assumption, the flux emitted by an SSP can be modelled as:
 
 .. math::
-        F_\lambda \bigl(\text{age}, [\mathrm{M}/\mathrm{H}] \bigr)
-    = \int_{m_{\mathrm{ini}}}^{m_{\mathrm{end}}}
-      S_\lambda \!\left(\log g, T_{\mathrm{eff}}, [\mathrm{M}/\mathrm{H}] \right)
+    F_\lambda \bigl(\text{age}, [\mathrm{M}/\mathrm{H}] \bigr)
+    = \int_{m_{\mathrm{low}}}^{m_{\mathrm{high}}(age)}
+      S_\lambda^{M_V}\!\left(m \mid \mathrm{age},[\mathrm{M}/\mathrm{H}]\right)
       \,\chi(m) \, dm
 
 This is the basis of evolutionary stellar population modelling, where the IMF defines the weight of each stellar type (/mass). In some circumstances, however, the number of stars per resolution element is not large enough and the integral limit does not hold. In this so-called semi-resolved regime, the flux of an SSP can be instead represented as:
 
 .. math::
-        f_\lambda\bigl(\text{age}, [\mathrm{M}/\mathrm{H}], N_\mathrm{stars}\bigr)
-    = \sum_{i=1}^{N_\mathrm{stars}} S_{\lambda, i} \, \!\left(\log g_i, T_{\mathrm{eff},i}, [\mathrm{M}/\mathrm{H}]_i \right)
+    f_\lambda\bigl(\text{age}, [\mathrm{M}/\mathrm{H}], N_\mathrm{stars}\bigr)
+    = \sum_{i=1}^{N_\mathrm{stars}} S_\lambda^{M_V}\!\left(m \mid \mathrm{age},[\mathrm{M}/\mathrm{H}]\right)
 
 
 The semi-resolved regime is stochastic by construction. Therefore, even after fixing the age, chemical composition, IMF and the number of stars contributing to the observed flux, there is a range of possible model predictions depending on the discrete sampling of the IMF.
@@ -61,7 +61,7 @@ Ingredients
 Isochrones
 ^^^^^^^^^^^^
 
-We make use of the `BaSTI-IAC <http://basti-iac.oa-abruzzo.inaf.it/>`_ set of isochrones. Specifically we use their solar-scaled isochrones, with overshooting and atomic diffusion treatment, mass loss :math:`\eta=0.3` and He:math:`=0.247`.
+We make use of the `BaSTI-IAC <http://basti-iac.oa-abruzzo.inaf.it/>`_ set of isochrones. Specifically we use their solar-scaled isochrones, with overshooting and atomic diffusion treatment, mass loss :math:`\eta=0.3` and He :math:`=0.247`.
 
 .. important::
 
@@ -167,3 +167,10 @@ If you use FASTAR in your research, please consider citing the following papers:
 
   *Martín-Navarro I. et al.*
   `MNRAS, 447, 1033 (2015) <https://ui.adsabs.harvard.edu/abs/2015MNRAS.447.1033M>`_
+
+
+Contact
+-----------
+
+For any questions or suggestions, contact us at
+`ignacio.martin@iac.es <mailto:ignacio.martin@iac.es>`_.
