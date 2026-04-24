@@ -1,5 +1,5 @@
-Examples
-========
+Gallery
+=======
 
 
 Basic Usage
@@ -7,12 +7,8 @@ Basic Usage
 
 .. nbgallery::
    Getting started <basic_usage.ipynb>
-   Integrated SSP example <ssp_spec_demo.ipynb>
-   Stellar models <stellar_demo.ipynb>
+   Magnitudes, colors, line-strengths and M/L ratios <extra_param.ipynb>
+   Semi-resolved stellar populations <semi.ipynb>
    Playing with IMF variations <imf_demo.ipynb>
-
-Advanced uses
--------------
-
-.. .. nbgallery::
-..    SBI training <sbi_training.ipynb>
+   Model grid and SSP uncertainties <model_grid.ipynb>
+   Stellar spectra <stellar_demo.ipynb>
