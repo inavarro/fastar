@@ -33,9 +33,7 @@ class PCARegressor(nn.Module):
     # W0221: Variadics removed in overridden 'PCARegressor.__call__' method
     @nn.compact
     def __call__(self, x):  # pylint: disable=arguments-differ
-        act = {'relu': nn.relu, 'tanh': nn.tanh, 'gelu': nn.gelu}[
-            self.activation_type
-        ]
+        act = {'relu': nn.relu, 'tanh': nn.tanh, 'gelu': nn.gelu}[self.activation_type]
         x = nn.Dense(64)(x)
         x = act(x)
         x = nn.Dense(128)(x)
