@@ -1,6 +1,6 @@
 [project]
 dynamic = ["version"]
-name = "fastar"
+name = "fastar-astro"
 description = "Stellar population synthesis tools"
 authors = [
   { name = "Ignacio Martin Navarro", email = "ignacio.martin@iac.es" }
