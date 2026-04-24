@@ -62,22 +62,18 @@ def flux_sum(wave, flux, bend, rend):
     nfrac = wave[(wave > bend - step / 2) & (wave < bend + step / 2)]
     if nfrac.size != 0:
         wfrac = ((nfrac + step / 2) - bend) / step
-        total += (
-            flux[(wave > bend - step / 2) & (wave < bend + step / 2)] * wfrac
-        )
+        total += flux[(wave > bend - step / 2) & (wave < bend + step / 2)] * wfrac
 
     # Handle partial pixels on red edge
     nfrac = wave[(wave < rend + step / 2) & (wave > rend - step / 2)]
     if nfrac.size != 0:
         wfrac = (rend - (nfrac - step / 2)) / step
-        total += (
-            flux[(wave > rend - step / 2) & (wave < rend + step / 2)] * wfrac
-        )
+        total += flux[(wave > rend - step / 2) & (wave < rend + step / 2)] * wfrac
 
     return total
 
 
-def compute_linetrength(wave, flux, index, dat):
+def compute_linestrengths(wave, flux, index, dat):
     """
     Compute the strength of a spectral feature defined by a Lick-style index.
 
@@ -113,34 +109,25 @@ def compute_linetrength(wave, flux, index, dat):
     )
 
     blue_width = (
-        dat[dat['NAME'] == index]['Blue_1'][0]
-        + dat[dat['NAME'] == index]['Blue_2'][0]  # noqa: W503
+        dat[dat['NAME'] == index]['Blue_1'][0] + dat[dat['NAME'] == index]['Blue_2'][0]  # noqa: W503
     ) / 2.0
     red_width = (
-        dat[dat['NAME'] == index]['Red_1'][0]
-        + dat[dat['NAME'] == index]['Red_2'][0]  # noqa: W503
+        dat[dat['NAME'] == index]['Red_1'][0] + dat[dat['NAME'] == index]['Red_2'][0]  # noqa: W503
     ) / 2.0
 
     blue_c /= (
-        dat[dat['NAME'] == index]['Blue_2'][0]
-        - dat[dat['NAME'] == index]['Blue_1'][0]  # noqa: W503
+        dat[dat['NAME'] == index]['Blue_2'][0] - dat[dat['NAME'] == index]['Blue_1'][0]  # noqa: W503
     )
     red_c /= (
-        dat[dat['NAME'] == index]['Red_2'][0]
-        - dat[dat['NAME'] == index]['Red_1'][0]  # noqa: W503
+        dat[dat['NAME'] == index]['Red_2'][0] - dat[dat['NAME'] == index]['Red_1'][0]  # noqa: W503
     )
 
     mval = (red_c - blue_c) / (red_width - blue_width)
-    cval_1 = (
-        mval * (dat[dat['NAME'] == index]['Line_1'][0] - blue_width) + blue_c
-    )
-    cval_2 = (
-        mval * (dat[dat['NAME'] == index]['Line_2'][0] - blue_width) + blue_c
-    )
+    cval_1 = mval * (dat[dat['NAME'] == index]['Line_1'][0] - blue_width) + blue_c
+    cval_2 = mval * (dat[dat['NAME'] == index]['Line_2'][0] - blue_width) + blue_c
 
     cont = (0.5 * (cval_1 + cval_2)) * (
-        dat[dat['NAME'] == index]['Line_2'][0]
-        - dat[dat['NAME'] == index]['Line_1'][0]  # noqa: W503
+        dat[dat['NAME'] == index]['Line_2'][0] - dat[dat['NAME'] == index]['Line_1'][0]  # noqa: W503
     )
 
     band_c = flux_sum(
