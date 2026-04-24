@@ -12,9 +12,7 @@ import jax.numpy as jnp
 import jax.scipy.integrate as jsp_integrate
 
 
-def flexi_imf_raw(
-    mass, m_min=0.1, m_max=100.0, m_peak=0.5, alpha=2.3, beta=2.3
-):
+def flexi_imf_raw(mass, m_min=0.1, m_max=100.0, m_peak=0.5, alpha=2.3, beta=2.3):
     """
     Returns the normalized tapered power-law IMF as described in de Marchi,
     Paresce & Portegies Zwart (2005), evaluated at `mass` and fully
@@ -43,9 +41,7 @@ def flexi_imf_raw(
     mass = jnp.atleast_1d(mass)
 
     def imf_unnormalized(mass_value):
-        return mass_value ** (-alpha) * (
-            1 - jnp.exp(-((mass_value / m_peak) ** beta))
-        )
+        return mass_value ** (-alpha) * (1 - jnp.exp(-((mass_value / m_peak) ** beta)))
 
     m_vals = jnp.linspace(m_min, m_max, 5000)
     norm = jsp_integrate.trapezoid(imf_unnormalized(m_vals) * m_vals, x=m_vals)
