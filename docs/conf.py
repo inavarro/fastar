@@ -13,13 +13,15 @@
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
 from importlib.metadata import version as importlib_metadata_version
+import warnings
 
+warnings.filterwarnings('ignore', message='Unable to import Axes3D')
 
 # -- Project information -----------------------------------------------------
 
-project = 'FaStar'
-copyright = '2025, Ignacio Martin Navarro'
-author = 'Ignacio Martin Navarro'
+project = 'FASTAR'
+copyright = '2026, the FASTAR team'
+author = 'the FASTAR team'
 
 # The full version, including alpha/beta/rc tags
 # release = '__project_release__'
@@ -93,6 +95,8 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # a list of builtin themes.
 #
 html_theme = 'sphinx_book_theme'
+pygments_style = 'github-dark'
+pygments_dark_style = 'github-dark'
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
