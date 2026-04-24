@@ -274,7 +274,7 @@ class IntegratedSSPSynthesizer(BaseSSPSynthesizer):
         met_range=None,
         imf_range=None,
         cache_dir='ssp_cache',
-        user_label='',
+        user_label=None,
     ):
         """
         Compute or load a grid of precomputed SSP spectra and save them to disk.
@@ -296,7 +296,7 @@ class IntegratedSSPSynthesizer(BaseSSPSynthesizer):
         cache_dir : str, optional
             Directory where the SSP grids are stored or will be saved. Default is "ssp_cache".
         user_label : str, optional
-            Optional string appended to the output filename for custom identification.
+            Optional string output filename for custom identification.
 
         Returns
         -------
@@ -350,12 +350,17 @@ class IntegratedSSPSynthesizer(BaseSSPSynthesizer):
         age_str = _format_range(age_range)
         met_str = _format_range(met_range)
         imf_str = _format_imf_range(imf_range)
-        fname = (
-            f'sspgrid_age{age_str}_met{met_str}_imf{imf_str}'
-            + self.rlabel
-            + user_label
-            + '.hdf5'
-        )
+
+        if user_label:
+            fname = str(user_label) + '.hdf5'
+
+        else:
+            fname = (
+                f'sspgrid_age{age_str}_met{met_str}_imf{imf_str}'
+                + self.rlabel
+                + str(user_label)
+                + '.hdf5'
+            )
         cache_path = os.path.join(cache_dir, fname)
 
         # Load if exists
