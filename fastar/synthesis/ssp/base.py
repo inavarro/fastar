@@ -50,6 +50,7 @@ class BaseSSPSynthesizer(StellarSynthesizer):
             self.mets = iso['mets'][:]
             self.ages = iso['ages'][:]
             self.mass_ini_data = iso['mass_ini'][:]
+            self.mass_out_data = iso['mass_out'][:]
             self.teff_out_data = iso['teff_out'][:]
             self.logg_out_data = iso['logg_out'][:]
             self.lumi_out_data = iso['lumi_out'][:]
@@ -85,6 +86,23 @@ class BaseSSPSynthesizer(StellarSynthesizer):
             self.lumi_out_data,
         )
         return imass, iteff, ilogg, ilum
+
+    @partial(jax.jit, static_argnames=['self'])
+    def _get_outmass(self, age, met):
+        """
+        Retrieve out masses
+        """
+        imass, _, _, _ = isochrone_interpolation(
+            age,
+            met,
+            self.ages,
+            self.mets,
+            self.mass_out_data,
+            self.teff_out_data,
+            self.logg_out_data,
+            self.lumi_out_data,
+        )
+        return imass
 
     @partial(jax.jit, static_argnames=['self'])
     def _compute_ab_magnitudes(self, spectra, filter_response=None):
