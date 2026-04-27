@@ -87,5 +87,6 @@ from fastar import IntegratedSSPSynthesizer
 from fastar.imf import kroupa
 
 ssp = IntegratedSSPSynthesizer(imf_function=kroupa)
-wave, flux = ssp.synthesize(age=10.0, met=0.0)
+flux = ssp.synthesize(age=10.0, met=0.0)
+wave = ssp.wave
 ```
