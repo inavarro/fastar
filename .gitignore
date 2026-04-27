@@ -42,3 +42,4 @@ Thumbs.db
 docs/_autoapi/
 
 uv.lock
+ssp_cache/
