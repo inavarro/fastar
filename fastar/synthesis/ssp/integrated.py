@@ -192,11 +192,12 @@ class IntegratedSSPSynthesizer(BaseSSPSynthesizer):
 
         # Interpolate isochrone at given age and metallicity
         imass, _, _, _ = self._get_isochrone(age, met)
+        omass = self._get_outmass(age, met)
 
         # Evaluate IMF (can be overridden per call)
         imf_val = self.imf_function(imass, imf_params)
 
-        return trapezoid(imf_val * imass, x=imass)
+        return trapezoid(imf_val * omass, x=imass)
 
     @partial(jax.jit, static_argnames=['self'])
     def mass_to_light_ratio(
