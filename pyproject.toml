@@ -21,14 +21,14 @@ keywords = [
     "science",
 ]
 dependencies = [
-  "astropy>=6.1.7",
-  "astroquery>=0.4.8",
-  "flax>=0.10.5",
-  "h5py>=3.12.1",
+  "astropy>=6",
+  "astroquery>=0.4",
+  "flax>=0.10",
+  "h5py>=3.10",
   "jax>=0.6.0",
-  "matplotlib>=3.10.1",
-  "numpy>=2.2.5",
-  "tqdm>=4.67.1",
+  "matplotlib>=3",
+  "numpy>=2",
+  "tqdm>=4.65",
 ]
 
 [dependency-groups]
