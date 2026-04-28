@@ -25,7 +25,7 @@ author = 'the FASTAR team'
 
 # The full version, including alpha/beta/rc tags
 # release = '__project_release__'
-release = importlib_metadata_version('fastar')
+release = importlib_metadata_version('fastar-astro')
 
 # The short X.Y version or the full version
 # version = '.'.join(release.split('.')[:2])
