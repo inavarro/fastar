@@ -48,7 +48,7 @@ class BaseSSPSynthesizer(StellarSynthesizer):
 
         with h5py.File(get_asset_path('BASTI-IAC_isochrones.hdf5'), 'r') as iso:
             self.mets = iso['mets'][:]
-            self.ages = iso['ages'][:]
+            self.ages = iso['ages'][:].astype(jnp.float32)
             self.mass_ini_data = iso['mass_ini'][:]
             self.mass_out_data = iso['mass_out'][:]
             self.teff_out_data = iso['teff_out'][:]
