@@ -10,4 +10,3 @@ Other modules
    fastar.interpolate
    fastar.nn
    fastar.tools
-   fastar.viz
