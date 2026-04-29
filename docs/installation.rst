@@ -1,4 +1,4 @@
-Getting FASTAR
+Installation
 ==================================
 
 .. code-block:: python
