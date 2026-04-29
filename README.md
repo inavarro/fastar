@@ -1,6 +1,6 @@
 <br>
 <p align="center">
-  <img src="docs/_static/fastar_logo.png" width="300"
+  <img src="https://github.com/inavarro/fastar/raw/main/docs/_static/fastar_logo.png" width="300"
    alt="FaStar logo">
 </p>
 <br>
@@ -45,9 +45,7 @@ resolution element is not large enough.
 ## Installation
 
 ```bash
-git clone https://github.com/inavarro/fastar.git
-cd fastar/
-pip install .
+python3 -m pip install fastar-astro
 ```
 
 This will install it in the current environment, but it is recommended to use
