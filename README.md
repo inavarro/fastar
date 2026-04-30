@@ -1,6 +1,6 @@
 <br>
 <p align="center">
-  <img src="https://github.com/inavarro/fastar/raw/main/docs/_static/fastar_logo.png" width="300"
+  <img src="https://raw.githubusercontent.com/inavarro/fastar/main/docs/_static/fastar_logo.png" width="300" alt="FaStar logo">
    alt="FaStar logo">
 </p>
 <br>
