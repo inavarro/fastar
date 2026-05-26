@@ -161,12 +161,12 @@ If you use FASTAR in your research, please consider citing the following papers:
 - **FASTAR I — Differentiable synthesis of evolutionary stellar population models**
 
   *Martín-Navarro I. et al.*
-  `MNRAS, 447, 1033 (2015) <https://ui.adsabs.harvard.edu/abs/2015MNRAS.447.1033M>`_
+  `2026A <http://arxiv.org/abs/2605.24093>`_
 
 - **FASTAR II — Semi-resolved evolutionary stellar population models**
 
   *Martín-Navarro I. et al.*
-  `MNRAS, 447, 1033 (2015) <https://ui.adsabs.harvard.edu/abs/2015MNRAS.447.1033M>`_
+  `2026B <http://arxiv.org/abs/2605.24476>`_
 
 
 Contact
